@@ -49,12 +49,15 @@ DC.views = DC.views || {};
       DC.store.markMystery();
       var lvl = DC.store.addXp(r.xp);
       DC.store.addBadge("fortunato");
-      DC.fx.confetti({ count: 110 });
-      DC.fx.sound.success(); DC.fx.buzz.win();
-      DC.fx.toast(r.msg, { win: true, icon: "gift", ms: 2200 });
+      DC.fx.buzz.win();
       DC.refreshNav();
-      if (lvl.leveledUp) setTimeout(function () { DC.fx.sound.levelup(); DC.fx.toast("Livello " + lvl.level + "!", { win: true, icon: "trophy" }); }, 800);
-      setTimeout(function () { DC.refresh(); }, 1200);
+      DC.fx.reveal({
+        icon: "gift", title: "+" + r.xp + " XP", sub: r.msg, variant: "warm",
+        onClose: function () {
+          if (lvl.leveledUp) { DC.fx.sound.levelup(); DC.fx.toast("Livello " + lvl.level + "!", { win: true, icon: "trophy" }); }
+          DC.refresh();
+        }
+      });
     }, DC.fx.reduced ? 0 : 480);
   };
 
@@ -105,6 +108,6 @@ DC.views = DC.views || {};
 
   function toggleRow(key, label, on) {
     return '<div class="cart-row" style="padding:var(--sp-3) 0"><span style="font-weight:600">' + label + '</span>' +
-      '<button data-toggle="' + key + '" class="chip" aria-pressed="' + !!on + '">' + (on ? "Attivo" : "Off") + '</button></div>';
+      '<button data-toggle="' + key + '" class="chip" role="switch" aria-checked="' + !!on + '" aria-label="' + label + '">' + (on ? "Attivo" : "Off") + '</button></div>';
   }
 })();

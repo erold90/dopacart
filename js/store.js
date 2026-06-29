@@ -70,7 +70,7 @@ window.DC = window.DC || {};
   }
 
   /* —— Ordini —— */
-  function createOrder() {
+  function createOrder(ship) {
     var items = state.cart.map(function (l) {
       var p = productById(l.productId);
       return { productId: p.id, qty: l.qty, price: p.price, title: p.title, emoji: p.emoji, hue: p.hue };
@@ -88,6 +88,7 @@ window.DC = window.DC || {};
     var order = {
       id: "o" + Date.now(),
       items: items, total: total,
+      ship: ship || {},
       createdAt: Date.now(),
       stateIndex: 0,
       offsets: offsets,           // ms dall'inizio per raggiungere ogni stato

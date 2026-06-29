@@ -20,7 +20,7 @@ a{color:inherit;text-decoration:none}
 
 /* ————— App shell ————— */
 #app{max-width:var(--app-max);margin:0 auto;min-height:100dvh;background:var(--bg);position:relative;display:flex;flex-direction:column;overflow:hidden}
-.view{flex:1;padding:var(--sp-4) var(--sp-4) calc(var(--nav-h) + var(--sp-12))}
+.view{flex:1;padding:var(--sp-4) var(--sp-4) calc(var(--nav-h) + 92px)}
 .view>*{animation:rise var(--dur-base) var(--ease-out) both}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 /* stagger per griglie */
@@ -126,7 +126,7 @@ a{color:inherit;text-decoration:none}
 .pcard .price{display:flex;align-items:baseline;gap:6px;margin-top:var(--sp-2)}
 .price .now{font-family:var(--font-display);font-weight:700;font-size:var(--fs-lg);letter-spacing:-.03em}
 .price .was{color:var(--text-faint);text-decoration:line-through;font-size:var(--fs-xs)}
-.quickadd{position:absolute;right:var(--sp-2);bottom:var(--sp-2);width:40px;height:40px;border-radius:var(--r-full);
+.quickadd{position:absolute;right:var(--sp-2);bottom:var(--sp-2);width:44px;height:44px;border-radius:var(--r-full);
   background:var(--grad-action);color:var(--on-action);display:grid;place-items:center;box-shadow:0 6px 14px oklch(0.64 0.2 18/.4);
   transition:transform var(--dur-micro) var(--ease-pop);z-index:3}
 .quickadd:active{transform:scale(.82)}
@@ -200,8 +200,8 @@ a{color:inherit;text-decoration:none}
 .disclaimer{font-size:var(--fs-xs);color:var(--text-soft);text-align:center;margin-top:var(--sp-3)}
 
 /* ————— Tracker ————— */
-.eta{text-align:center;margin-bottom:var(--sp-4)}
-.eta .big{font-family:var(--font-display);font-weight:800;font-size:var(--fs-2xl);letter-spacing:-.03em}
+.eta{text-align:left;margin:var(--sp-1) 0 var(--sp-4)}
+.eta .big{font-family:var(--font-display);font-weight:800;font-size:var(--fs-xl);letter-spacing:-.03em;line-height:1.1}
 .eta small{display:block;font-size:var(--fs-sm);color:var(--text-soft);margin-top:2px}
 .tracker-map{height:210px;border-radius:var(--r-xl);overflow:hidden;position:relative;margin-bottom:var(--sp-5);box-shadow:var(--shadow-card);
   background:
@@ -297,6 +297,24 @@ a{color:inherit;text-decoration:none}
 .onb h2{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:800;letter-spacing:-.035em;line-height:1.05;position:relative;z-index:1;max-width:14ch}
 .onb p{opacity:.92;max-width:28ch;position:relative;z-index:1}
 .onb .btn{position:relative;z-index:1;background:oklch(0.998 0.005 70);color:oklch(0.30 0.16 18)}
+
+/* ————— Reveal overlay (mystery box + unboxing consegna) ————— */
+.reveal-ov{position:fixed;inset:0;z-index:76;display:flex;align-items:center;justify-content:center;padding:var(--sp-6);
+  background:oklch(0.14 0.03 290/.6);backdrop-filter:blur(10px);transition:opacity .28s;animation:ovIn .28s var(--ease-out)}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+.reveal-card{position:relative;width:100%;max-width:340px;border-radius:var(--r-xl);padding:var(--sp-10) var(--sp-6) var(--sp-6);text-align:center;color:var(--on-action);box-shadow:var(--shadow-pop);overflow:hidden;animation:cardPop var(--dur-meso) var(--ease-pop) both}
+.reveal-ov.reward .reveal-card{background:var(--grad-reward)}
+.reveal-ov.warm .reveal-card{background:var(--grad-warm)}
+.reveal-card::after{content:"";position:absolute;inset:0;background:var(--grain);opacity:.14;mix-blend-mode:overlay;pointer-events:none}
+@keyframes cardPop{0%{transform:scale(.72) translateY(20px);opacity:0}60%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
+.reveal-burst{width:122px;height:122px;margin:0 auto var(--sp-4);border-radius:50%;display:grid;place-items:center;background:oklch(1 0 0/.16);position:relative;animation:burst .55s var(--ease-pop) both;animation-delay:.12s}
+.reveal-burst::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px dashed oklch(1 0 0/.4);animation:spin 9s linear infinite}
+@keyframes burst{0%{transform:scale(0) rotate(-25deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.reveal-burst .ic{width:62px;height:62px;color:oklch(1 0 0/.97);stroke-width:1.7}
+.reveal-title{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:800;letter-spacing:-.035em;line-height:1.02}
+.reveal-sub{opacity:.94;margin-top:var(--sp-2);font-size:var(--fs-sm);line-height:1.5}
+.reveal-hint{margin-top:var(--sp-5);font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
 
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important;animation-iteration-count:1 !important}

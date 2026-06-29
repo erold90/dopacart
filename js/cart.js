@@ -25,7 +25,7 @@ DC.views = DC.views || {};
 
     root.innerHTML =
       '<div class="h1">Carrello</div>' +
-      '<div class="sub">' + s.cartCount() + ' articoli pronti a partire</div>' +
+      '<div class="sub">' + (s.cartCount() === 1 ? '1 articolo pronto a partire' : s.cartCount() + ' articoli pronti a partire') + '</div>' +
       '<div style="margin-top:var(--sp-4)">' +
         lines.map(function (l) {
           var p = s.productById(l.productId);

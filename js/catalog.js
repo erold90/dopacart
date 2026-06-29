@@ -36,7 +36,8 @@ DC.views = DC.views || {};
   DC.views.home = function (root) {
     var s = DC.store;
     var offerte = DC.catalog.products.filter(function (p) { return p.badges.indexOf("offerta") >= 0; });
-    var perTe = DC.catalog.products.slice().sort(function () { return Math.random() - 0.5; }).slice(0, 8);
+    var offIds = offerte.map(function (p) { return p.id; });
+    var perTe = DC.catalog.products.filter(function (p) { return offIds.indexOf(p.id) < 0; }).sort(function () { return Math.random() - 0.5; }).slice(0, 8);
     var canMystery = s.canOpenMystery();
 
     root.innerHTML =
@@ -90,6 +91,8 @@ DC.views = DC.views || {};
     root.querySelectorAll(".chip").forEach(function (ch) {
       ch.addEventListener("click", function () { activeCat = ch.dataset.cat; DC.fx.sound.tap(); DC.fx.buzz.light(); DC.views.catalog(root); });
     });
+    var act = root.querySelector('.chip[aria-pressed="true"]');
+    if (act && act.scrollIntoView) act.scrollIntoView({ inline: "center", block: "nearest" });
   };
 
   /* —— SCHEDA PRODOTTO —— */

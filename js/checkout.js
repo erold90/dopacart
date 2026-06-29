@@ -3,6 +3,7 @@ window.DC = window.DC || {};
 DC.views = DC.views || {};
 (function () {
   var step = 1;
+  var ship = {};
 
   function stepsBar() {
     return '<div class="steps">' + [1, 2, 3].map(function (i) {
@@ -13,7 +14,7 @@ DC.views = DC.views || {};
 
   DC.views.checkout = function (root) {
     if (!DC.store.state.cart.length) { DC.go("#/cart"); return; }
-    step = 1; paint(root);
+    step = 1; ship = {}; paint(root);
   };
 
   function paint(root) {
@@ -54,16 +55,25 @@ DC.views = DC.views || {};
 
     root.querySelector("#back").addEventListener("click", function () { if (step === 1) DC.go("#/cart"); else { step--; paint(root); } });
     var next = root.querySelector("#next");
-    if (next) next.addEventListener("click", function () { DC.fx.sound.tap(); DC.fx.buzz.light(); step++; paint(root); });
+    if (next) next.addEventListener("click", function () {
+      if (step === 1) {
+        ship = {
+          name: (root.querySelector("#f-name").value || "").trim() || "Tu",
+          addr: (root.querySelector("#f-addr").value || "").trim(),
+          city: (root.querySelector("#f-city").value || "").trim()
+        };
+      }
+      DC.fx.sound.tap(); DC.fx.buzz.light(); step++; paint(root);
+    });
     var order = root.querySelector("#order");
     if (order) order.addEventListener("click", placeOrder);
   }
 
   function placeOrder() {
-    var o = DC.store.createOrder();
-    DC.fx.confetti({ count: 150 });
+    var o = DC.store.createOrder(ship);
+    DC.fx.confetti({ count: 120, y: innerHeight * 0.5 });
     DC.fx.sound.success(); DC.fx.buzz.strong();
-    DC.fx.toast("Ordine confermato! Il pacco è in viaggio", { win: true, icon: "check", ms: 2200 });
+    DC.fx.toast("Ordine confermato! Il pacco è in viaggio", { win: true, icon: "check", ms: 2000 });
     DC.refreshNav();
     DC.go("#/track/" + o.id);
   }

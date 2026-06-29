@@ -10,10 +10,22 @@ DC.views = DC.views || {};
   function courierPct(idx) { return 9 + (idx / LAST()) * 78; }
 
   function etaText(o) {
+    var name = (o.ship && o.ship.name && o.ship.name !== "Tu") ? o.ship.name : "te";
     var remaining = Math.max(0, Math.round((o.offsets[LAST()] - (Date.now() - o.createdAt)) / 1000));
     if (o.delivered || remaining <= 0) return { big: "Consegnato", small: "Goditi la dopamina, a costo zero" };
     var t = remaining < 60 ? ("~" + remaining + " s") : ("~" + Math.ceil(remaining / 60) + " min");
-    return { big: "Arrivo tra " + t, small: "Stiamo arrivando da te" };
+    return { big: "Arrivo tra " + t, small: "Stiamo arrivando da " + name };
+  }
+
+  function deliveryLine(p) {
+    var L = [
+      "Il tuo " + p.title + " è atterrato. Non esiste, ma che soddisfazione.",
+      p.title + " consegnato dal corriere immaginario. 0,00 € spesi.",
+      "Pacco aperto: dentro c’era pura dopamina, e zero addebiti.",
+      "Ta-daaa! Il tuo " + p.title + " è “tuo”. Il conto ringrazia.",
+      p.title + " recapitato in un universo dove hai risparmiato tutto."
+    ];
+    return L[Math.floor(Math.random() * L.length)];
   }
 
   DC.views.track = function (root, params) {
@@ -67,7 +79,7 @@ DC.views = DC.views || {};
       row.className = "tl " + (i < o.stateIndex ? "done" : i === o.stateIndex ? (o.delivered ? "done" : "active") : "pending");
       var tEntry = o.timeline.find(function (t) { return t.state === DC.ORDER_STATES[i].id; });
       var tt = root.querySelector("#tlt-" + i);
-      if (tt) tt.textContent = tEntry ? new Date(tEntry.at).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }) : "";
+      if (tt) tt.textContent = tEntry ? new Date(tEntry.at).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "";
     }
   }
 
@@ -104,11 +116,17 @@ DC.views = DC.views || {};
     var res = DC.rewards.grantForDelivery(o);
     DC.refreshNav();
     if (silent || !res.granted) return;
-    DC.fx.confetti({ count: 160 });
-    DC.fx.sound.success(); DC.fx.buzz.win();
-    DC.fx.toast("Consegnato! +" + res.xp + " XP · risparmiati " + DC.fx.euro(res.saved), { win: true, icon: "party", ms: 2400 });
-    if (res.leveledUp) setTimeout(function () { DC.fx.sound.levelup(); DC.fx.toast("Livello " + res.level + "!", { win: true, icon: "trophy", ms: 2200 }); }, 900);
-    res.newBadges.forEach(function (b, i) { setTimeout(function () { DC.fx.toast("Badge: " + b, { icon: "trophy", ms: 2000 }); }, 1600 + i * 700); });
+    var first = DC.store.productById(o.items[0].productId);
+    DC.fx.buzz.win();
+    DC.fx.reveal({
+      icon: DC.iconFor(first), title: "Consegnato!",
+      sub: deliveryLine(first) + " · +" + res.xp + " XP · risparmiati " + DC.fx.euro(res.saved),
+      variant: "reward", ms: 3400,
+      onClose: function () {
+        if (res.leveledUp) { DC.fx.sound.levelup(); DC.fx.toast("Livello " + res.level + "!", { win: true, icon: "trophy", ms: 2200 }); }
+        res.newBadges.forEach(function (b, i) { setTimeout(function () { DC.fx.toast("Badge: " + b, { icon: "trophy", ms: 2000 }); }, 300 + i * 700); });
+      }
+    });
   }
 
   /* —— Vista ORDINI —— */
@@ -128,7 +146,7 @@ DC.views = DC.views || {};
         var first = DC.store.productById(o.items[0].productId);
         return '<div class="cart-item" data-go="' + o.id + '">' +
           '<div class="ci-thumb" style="--h:' + (first ? first.hue : 280) + '">' + DC.icon(o.delivered ? "checkCircle" : st.icon) + '</div>' +
-          '<div class="ci-body"><div class="ci-title">' + o.items.length + ' articoli · ' + DC.fx.euro(o.total) + '</div>' +
+          '<div class="ci-body"><div class="ci-title">' + o.items.length + (o.items.length === 1 ? ' articolo' : ' articoli') + ' · ' + DC.fx.euro(o.total) + '</div>' +
           '<div class="tl-time">' + (o.delivered ? "Consegnato" : st.label) + '</div></div>' +
           DC.icon("chevronRight") + '</div>';
       }).join("") + '</div>';

@@ -116,9 +116,36 @@ window.DC = window.DC || {};
     setTimeout(function () { dot.remove(); }, 620);
   }
 
+  /* —— Reveal overlay (momento di scarica: mystery box + unboxing consegna) —— */
+  function reveal(opts) {
+    opts = opts || {};
+    var ov = document.createElement("div");
+    ov.className = "reveal-ov " + (opts.variant === "warm" ? "warm" : "reward");
+    ov.setAttribute("role", "dialog");
+    ov.innerHTML =
+      '<div class="reveal-card">' +
+        '<div class="reveal-burst">' + (DC.icon ? DC.icon(opts.icon || "gift") : "") + '</div>' +
+        '<div class="reveal-title">' + (opts.title || "") + '</div>' +
+        (opts.sub ? '<div class="reveal-sub">' + opts.sub + '</div>' : '') +
+        '<div class="reveal-hint">tocca per continuare</div>' +
+      '</div>';
+    document.body.appendChild(ov);
+    confetti({ count: opts.count || 150, y: innerHeight * 0.42 });
+    if (opts.sound !== false) sound.success();
+    var closed = false;
+    function close() {
+      if (closed) return; closed = true;
+      ov.style.opacity = "0";
+      setTimeout(function () { ov.remove(); if (opts.onClose) opts.onClose(); }, 280);
+    }
+    ov.addEventListener("click", close);
+    if (opts.auto !== false) setTimeout(close, opts.ms || 2900);
+    return close;
+  }
+
   DC.fx = {
     euro: euro, stars: stars, sound: sound, buzz: buzz,
-    toast: toast, confetti: confetti, flyToCart: flyToCart,
+    toast: toast, confetti: confetti, flyToCart: flyToCart, reveal: reveal,
     reduced: prefersReduced
   };
 })();

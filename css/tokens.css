@@ -7,8 +7,8 @@
   --surface-2: oklch(0.945 0.016 70);
   --border:    oklch(0.898 0.018 70);
   --text:      oklch(0.225 0.022 60);
-  --text-soft: oklch(0.515 0.024 60);
-  --text-faint:oklch(0.640 0.022 65);
+  --text-soft: oklch(0.490 0.024 60);
+  --text-faint:oklch(0.555 0.022 65);
 
   /* Colore-AZIONE unico (solo CTA) */
   --action:       oklch(0.640 0.215 18);
@@ -77,8 +77,8 @@
     --surface-2: oklch(0.300 0.024 285);
     --border:    oklch(0.350 0.024 285);
     --text:      oklch(0.965 0.010 80);
-    --text-soft: oklch(0.760 0.022 80);
-    --text-faint:oklch(0.640 0.022 285);
+    --text-soft: oklch(0.800 0.022 80);
+    --text-faint:oklch(0.710 0.022 285);
     --action:       oklch(0.700 0.205 22);
     --action-press: oklch(0.640 0.205 22);
     --on-action:    oklch(0.180 0.010 60);

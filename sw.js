@@ -1,7 +1,8 @@
 /* DopaCart — Service Worker: shell offline-first. */
-var CACHE = "dopacart-v2";
+var CACHE = "dopacart-v3";
 var ASSETS = [
-  "./", "index.html", "manifest.webmanifest", "assets/icon.svg",
+  "./", "index.html", "manifest.webmanifest",
+  "assets/icon.svg", "assets/icon-192.png", "assets/icon-512.png",
   "css/tokens.css", "css/app.css",
   "data/catalog.js", "js/icons.js", "js/store.js", "js/fx.js", "js/catalog.js",
   "js/cart.js", "js/checkout.js", "js/tracker.js", "js/rewards.js", "js/app.js"
