@@ -48,7 +48,7 @@ window.DC = window.DC || {};
     var wrap = document.getElementById("toasts");
     var el = document.createElement("div");
     el.className = "toast" + (opts.win ? " win" : "");
-    el.innerHTML = (opts.icon ? "<span>" + opts.icon + "</span>" : "") + "<span>" + msg + "</span>";
+    el.innerHTML = (opts.icon && DC.icon ? DC.icon(opts.icon) : "") + "<span>" + msg + "</span>";
     wrap.appendChild(el);
     setTimeout(function () {
       el.style.transition = "opacity .3s, transform .3s";

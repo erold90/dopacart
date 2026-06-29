@@ -2,7 +2,7 @@
 window.DC = window.DC || {};
 DC.views = DC.views || {};
 (function () {
-  var step = 1; // 1 indirizzo · 2 pagamento · 3 conferma
+  var step = 1;
 
   function stepsBar() {
     return '<div class="steps">' + [1, 2, 3].map(function (i) {
@@ -12,71 +12,58 @@ DC.views = DC.views || {};
   }
 
   DC.views.checkout = function (root) {
-    var s = DC.store;
-    if (!s.state.cart.length) { DC.go("#/cart"); return; }
-    step = 1;
-    paint(root);
+    if (!DC.store.state.cart.length) { DC.go("#/cart"); return; }
+    step = 1; paint(root);
   };
 
   function paint(root) {
-    var s = DC.store, total = s.cartTotal();
+    var s = DC.store, total = s.cartTotal(), inner;
 
-    var inner;
     if (step === 1) {
       inner =
-        '<div class="section-title" style="margin-top:0">📍 Dove lo spediamo (per finta)</div>' +
+        '<div class="section-title" style="margin-top:0">' + DC.icon("mapPin") + 'Dove lo spediamo (per finta)</div>' +
         '<div class="field"><label>Nome</label><input id="f-name" value="Tu" autocomplete="off"></div>' +
         '<div class="field"><label>Indirizzo</label><input id="f-addr" value="Via della Dopamina, 1" autocomplete="off"></div>' +
         '<div class="field"><label>Città</label><input id="f-city" value="Lecce" autocomplete="off"></div>' +
         '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="next">Continua</button></div>';
     } else if (step === 2) {
       inner =
-        '<div class="section-title" style="margin-top:0">💳 Pagamento (finto, tranquillo)</div>' +
-        '<div class="fakecard"><div style="opacity:.85;font-size:var(--fs-sm)">DopaCard · nessun addebito</div>' +
-          '<div class="num">•••• •••• •••• 0000</div>' +
-          '<div class="meta"><span>SEMPRE TU</span><span>∞/∞</span></div></div>' +
+        '<div class="section-title" style="margin-top:0">' + DC.icon("wallet") + 'Pagamento (finto, tranquillo)</div>' +
+        '<div class="fakecard"><div style="opacity:.85;font-size:var(--fs-sm);font-weight:700">DopaCard · nessun addebito</div>' +
+          '<div class="chiprect"></div>' +
+          '<div class="num">5470 0000 0000 0000</div>' +
+          '<div class="meta"><span>SEMPRE TU</span><span>∞ / ∞</span></div></div>' +
         '<div class="cart-summary"><div class="cart-row"><span class="sub">Totale</span>' +
           '<span class="cart-total tnum">' + DC.fx.euro(total) + '</span></div>' +
-          '<div class="label sub" style="font-size:var(--fs-xs)">0,00 € verranno addebitati. Davvero.</div></div>' +
+          '<div class="disclaimer">0,00 € verranno addebitati. Davvero.</div></div>' +
         '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="next">Continua</button></div>';
     } else {
-      var s2 = DC.store;
       inner =
-        '<div class="section-title" style="margin-top:0">🧾 Conferma</div>' +
-        s2.state.cart.map(function (l) {
-          var p = s2.productById(l.productId);
-          return '<div class="cart-row"><span>' + p.emoji + ' ' + p.title + ' ×' + l.qty + '</span>' +
-            '<span class="tnum">' + DC.fx.euro(p.price * l.qty) + '</span></div>';
+        '<div class="section-title" style="margin-top:0">' + DC.icon("clipboard") + 'Conferma</div>' +
+        s.state.cart.map(function (l) {
+          var p = s.productById(l.productId);
+          return '<div class="cart-row"><span>' + p.title + ' ×' + l.qty + '</span><span class="tnum">' + DC.fx.euro(p.price * l.qty) + '</span></div>';
         }).join("") +
-        '<div class="cart-summary"><div class="cart-row"><span class="cart-total">Totale</span>' +
-          '<span class="cart-total tnum">' + DC.fx.euro(total) + '</span></div></div>' +
-        '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="order">🎉 Ordina ora</button></div>';
+        '<div class="cart-summary"><div class="cart-row"><span class="cart-total">Totale</span><span class="cart-total tnum">' + DC.fx.euro(total) + '</span></div></div>' +
+        '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="order">' + DC.icon("zap") + ' Ordina ora</button></div>';
     }
 
     root.innerHTML =
       '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' ' + (step === 1 ? 'Carrello' : 'Indietro') + '</button>' +
       '<div class="h1">Checkout</div>' + stepsBar() + inner;
 
-    root.querySelector("#back").addEventListener("click", function () {
-      if (step === 1) DC.go("#/cart"); else { step--; paint(root); }
-    });
-
+    root.querySelector("#back").addEventListener("click", function () { if (step === 1) DC.go("#/cart"); else { step--; paint(root); } });
     var next = root.querySelector("#next");
-    if (next) next.addEventListener("click", function () {
-      DC.fx.sound.tap(); DC.fx.buzz.light(); step++; paint(root);
-    });
-
+    if (next) next.addEventListener("click", function () { DC.fx.sound.tap(); DC.fx.buzz.light(); step++; paint(root); });
     var order = root.querySelector("#order");
-    if (order) order.addEventListener("click", function () { placeOrder(); });
+    if (order) order.addEventListener("click", placeOrder);
   }
 
   function placeOrder() {
     var o = DC.store.createOrder();
-    // MESO-REWARD: coriandoli + suono di successo + haptic forte
     DC.fx.confetti({ count: 150 });
-    DC.fx.sound.success();
-    DC.fx.buzz.strong();
-    DC.fx.toast("Ordine confermato! Il pacco è in viaggio", { win: true, icon: "🎉", ms: 2200 });
+    DC.fx.sound.success(); DC.fx.buzz.strong();
+    DC.fx.toast("Ordine confermato! Il pacco è in viaggio", { win: true, icon: "check", ms: 2200 });
     DC.refreshNav();
     DC.go("#/track/" + o.id);
   }

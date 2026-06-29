@@ -47,6 +47,17 @@ DC.catalog = {
   ]
 };
 
+/* Mappa prodotto -> icona di linea (vedi js/icons.js). Niente emoji. */
+DC.PRODUCT_ICON = {
+  t1:"headphones", t2:"watch", t3:"tv", t4:"keyboard", t5:"battery",
+  h1:"coffee", h2:"lamp", h3:"bed", h4:"wind", h5:"bot",
+  f1:"footprints", f2:"backpack", f3:"glasses", f4:"clock",
+  b1:"wind", b2:"droplet", b3:"flower", b4:"sparkles",
+  g1:"gamepad", g2:"palette", g3:"dumbbell", g4:"plane", g5:"speaker"
+};
+DC.CAT_ICON = { all:"sparkles", tech:"cpu", home:"home", fashion:"shirt", beauty:"droplet", fun:"gamepad" };
+DC.iconFor = function (p) { return DC.PRODUCT_ICON[p.id] || "package"; };
+
 /* Costruisce l'URL affiliato (placeholder: sostituire ASSOCIATE_TAG e l'ASIN reale via SiteStripe). */
 DC.affiliateUrl = function (product) {
   var q = encodeURIComponent(product.title);

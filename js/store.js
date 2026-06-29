@@ -4,12 +4,12 @@ window.DC = window.DC || {};
   var KEY = "dopacart.v1";
 
   DC.ORDER_STATES = [
-    { id: "CONFERMATO",     label: "Ordine confermato",  emoji: "✅" },
-    { id: "IN_PREPARAZIONE",label: "In preparazione",    emoji: "📦" },
-    { id: "SPEDITO",        label: "Spedito",            emoji: "🚚" },
-    { id: "IN_TRANSITO",    label: "In transito",        emoji: "🛣️" },
-    { id: "IN_CONSEGNA",    label: "In consegna!",       emoji: "📍" },
-    { id: "CONSEGNATO",     label: "Consegnato",         emoji: "🎉" }
+    { id: "CONFERMATO",     label: "Ordine confermato",  icon: "checkCircle" },
+    { id: "IN_PREPARAZIONE",label: "In preparazione",    icon: "package" },
+    { id: "SPEDITO",        label: "Spedito",            icon: "boxes" },
+    { id: "IN_TRANSITO",    label: "In transito",        icon: "truck" },
+    { id: "IN_CONSEGNA",    label: "In consegna!",       icon: "mapPin" },
+    { id: "CONSEGNATO",     label: "Consegnato",         icon: "party" }
   ];
 
   function todayStr() { var d = new Date(); return d.toISOString().slice(0, 10); }
