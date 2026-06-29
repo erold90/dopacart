@@ -1,0 +1,72 @@
+/* DopaCart — design tokens (OKLCH). Vedi DESIGN.md.
+   Neutri tintati verso il caldo (hue ~60-70). Mai #000/#fff. */
+:root {
+  /* Base neutra calda */
+  --bg:        oklch(0.972 0.012 70);
+  --surface:   oklch(0.995 0.006 70);
+  --surface-2: oklch(0.945 0.015 70);
+  --border:    oklch(0.900 0.016 70);
+  --text:      oklch(0.235 0.020 60);
+  --text-soft: oklch(0.520 0.022 60);
+
+  /* Colore-AZIONE unico (solo CTA) */
+  --action:       oklch(0.645 0.210 18);
+  --action-press: oklch(0.575 0.205 18);
+  --action-soft:  oklch(0.645 0.210 18 / 0.12);
+  --on-action:    oklch(0.995 0.005 70);
+
+  /* Accenti dopamine décor — solo reward/gamification, MAI sui CTA */
+  --joy-violet: oklch(0.580 0.200 290);
+  --joy-mint:   oklch(0.740 0.150 165);
+  --joy-amber:  oklch(0.800 0.150 75);
+  --joy-blue:   oklch(0.680 0.150 240);
+
+  /* Semantici */
+  --success: var(--joy-mint);
+  --info:    var(--joy-blue);
+  --warning: var(--joy-amber);
+  --danger:  oklch(0.600 0.190 25);
+
+  /* Tipografia */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1rem; --fs-lg:1.2rem;
+  --fs-xl:1.44rem; --fs-2xl:1.728rem; --fs-3xl:2.074rem;
+
+  /* Spacing */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px; --sp-12:48px;
+
+  /* Raggi */
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-full:999px;
+
+  /* Ombre */
+  --shadow-card: 0 2px 10px oklch(0.30 0.02 60 / 0.08);
+  --shadow-soft: 0 1px 3px oklch(0.30 0.02 60 / 0.10);
+  --shadow-pop:  0 12px 34px oklch(0.58 0.20 290 / 0.22);
+  --shadow-nav:  0 -2px 16px oklch(0.30 0.02 60 / 0.08);
+
+  /* Motion */
+  --dur-micro:180ms; --dur-meso:420ms;
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --ease-pop: cubic-bezier(.34,1.4,.64,1);
+
+  /* App shell */
+  --app-max: 480px;
+  --nav-h: 64px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        oklch(0.205 0.018 65);
+    --surface:   oklch(0.255 0.020 65);
+    --surface-2: oklch(0.300 0.022 65);
+    --border:    oklch(0.360 0.022 65);
+    --text:      oklch(0.960 0.010 70);
+    --text-soft: oklch(0.760 0.020 70);
+    --action:       oklch(0.700 0.200 20);
+    --action-press: oklch(0.640 0.200 20);
+    --on-action:    oklch(0.180 0.010 60);
+    --shadow-card: 0 2px 12px oklch(0 0 0 / 0.35);
+    --shadow-nav:  0 -2px 16px oklch(0 0 0 / 0.35);
+  }
+}

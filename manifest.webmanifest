@@ -1,0 +1,16 @@
+{
+  "name": "DopaCart — shopping a costo zero",
+  "short_name": "DopaCart",
+  "description": "Il dopamine site italiano: vivi il rituale dello shopping per la scarica di dopamina, senza spendere.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf4ea",
+  "theme_color": "#fbf4ea",
+  "lang": "it",
+  "categories": ["lifestyle", "shopping", "entertainment"],
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
