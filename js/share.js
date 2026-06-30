@@ -76,12 +76,12 @@ window.DC = window.DC || {};
       ctx.textAlign = "center"; ctx.fillStyle = "#fff";
       ctx.font = "800 150px " + disp; ctx.fillText(opts.bigStat || "0,00 €", W / 2, heroY + 320);
     }
-    // titolo
-    ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.font = "700 44px " + body;
-    wrap(ctx, opts.title || "", W / 2, heroY + heroH - 36, W - 220, 52, 1);
+    // titolo (sotto il riquadro immagine, non sovrapposto)
+    ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.font = "700 42px " + body;
+    wrap(ctx, opts.title || "", W / 2, heroY + heroH + 50, W - 160, 50, 1);
 
     // headline
-    ctx.font = "800 92px " + disp; ctx.fillText(opts.headline || "CONSEGNATO!", W / 2, 900);
+    ctx.font = "800 92px " + disp; ctx.fillText(opts.headline || "CONSEGNATO!", W / 2, 912);
     // linea
     ctx.font = "600 36px " + body; ctx.globalAlpha = .95;
     var used = wrap(ctx, opts.line || "", W / 2, 968, W - 180, 46, 2); ctx.globalAlpha = 1;

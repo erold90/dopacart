@@ -3,7 +3,7 @@ window.DC = window.DC || {};
 DC.views = DC.views || {};
 DC.coupon = DC.coupon || { code: null, pct: 0 };
 (function () {
-  var GOAL = 150;
+  var GOAL_ITEMS = 4; // il "drop" si sblocca col numero di articoli (robusto a qualsiasi prezzo)
   var dropCelebrated = false;
 
   DC.views.cart = function (root) {
@@ -23,10 +23,11 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
     var sub = s.cartTotal();
     var disc = sub * (DC.coupon.pct || 0);
     var total = sub - disc;
-    var pct = Math.min(100, Math.round(sub / GOAL * 100));
-    var toGoal = Math.max(0, GOAL - sub);
+    var count = s.cartCount();
+    var pct = Math.min(100, Math.round(count / GOAL_ITEMS * 100));
+    var toGo = Math.max(0, GOAL_ITEMS - count);
     var inCart = lines.map(function (l) { return l.productId; });
-    var upsell = toGoal > 0 ? DC.catalog.products.filter(function (p) { return inCart.indexOf(p.id) < 0; }).sort(function (a, b) { return a.price - b.price; }).slice(0, 2) : [];
+    var upsell = toGo > 0 ? DC.catalog.products.filter(function (p) { return inCart.indexOf(p.id) < 0 && p.badges.indexOf("offerta") >= 0; }).sort(function () { return Math.random() - 0.5; }).slice(0, 2) : [];
 
     root.innerHTML =
       '<div class="h1">Carrello</div>' +
@@ -56,7 +57,7 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
 
       '<div class="cart-summary">' +
         '<div class="goalbar"><div class="track"><div class="fill" style="width:' + pct + '%"></div></div>' +
-          '<div class="label">' + (toGoal > 0 ? 'Ti mancano <b class="tnum">' + DC.fx.euro(toGoal) + '</b> per sbloccare il <b>drop</b>' : 'Drop sbloccato! Spedizione express simulata') + '</div></div>' +
+          '<div class="label">' + (toGo > 0 ? 'Aggiungi <b class="tnum">' + toGo + '</b> ' + (toGo === 1 ? 'articolo' : 'articoli') + ' e sblocca il <b>drop</b>' : 'Drop sbloccato! Spedizione express simulata') + '</div></div>' +
         '<div class="cart-row"><span class="sub">Subtotale</span><span class="tnum">' + DC.fx.euro(sub) + '</span></div>' +
         (disc > 0 ? '<div class="cart-row"><span style="color:var(--success);font-weight:700">Sconto ' + DC.coupon.code + '</span><span class="tnum" style="color:var(--success)">-' + DC.fx.euro(disc) + '</span></div>' : '') +
         '<div class="cart-row"><span class="cart-total">Totale (finto)</span><span class="cart-total tnum">' + DC.fx.euro(total) + '</span></div>' +
@@ -82,10 +83,10 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
     root.querySelector("#checkout").addEventListener("click", function () { DC.go("#/checkout"); });
 
     // Celebrazione "drop sbloccato" quando la barra raggiunge la soglia
-    if (sub >= GOAL && !dropCelebrated) {
+    if (count >= GOAL_ITEMS && !dropCelebrated) {
       dropCelebrated = true;
       DC.fx.confetti({ count: 90 }); DC.fx.sound.success(); DC.fx.buzz.strong();
       DC.fx.toast("Drop sbloccato! Spedizione express simulata", { win: true, icon: "bolt", ms: 2200 });
-    } else if (sub < GOAL) { dropCelebrated = false; }
+    } else if (count < GOAL_ITEMS) { dropCelebrated = false; }
   };
 })();

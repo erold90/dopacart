@@ -39,6 +39,7 @@ window.DC = window.DC || {};
     plusCircle: '<circle cx="12" cy="12" r="9"/><path d="M12 8.5v7M8.5 12h7"/>',
     bolt: '<path d="M13 2 5 13h6l-1 9 8-11h-6z"/>',
     share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
+    heart: '<path d="M12 20.5s-7-4.6-9.4-9.1C1.1 8.7 2.6 5 6.2 5 8.3 5 9.6 6.3 12 8.7 14.4 6.3 15.7 5 17.8 5c3.6 0 5.1 3.7 3.6 6.4C19 15.9 12 20.5 12 20.5z"/>',
 
     /* — Categorie — */
     cpu: '<rect x="6.5" y="6.5" width="11" height="11" rx="2.5"/><path d="M9.5 2v3M14.5 2v3M9.5 19v3M14.5 19v3M2 9.5h3M2 14.5h3M19 9.5h3M19 14.5h3"/>',

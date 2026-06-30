@@ -38,7 +38,7 @@ DC.views = DC.views || {};
   DC.views.track = function (root, params) {
     clearTimers();
     var o = DC.store.getOrder(params.id);
-    if (!o) { root.innerHTML = DC.emptyBox("package", "Ordine non trovato"); return; }
+    if (!o) { root.innerHTML = DC.emptyBox("package", "Ordine non trovato", { btn: "I tuoi ordini", btnHash: "#/orders", btnIcon: "package" }); return; }
     render(root, o);
     schedule(root, o);
   };

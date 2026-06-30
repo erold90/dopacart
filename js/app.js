@@ -27,6 +27,7 @@ window.DC = window.DC || {};
   function buildChrome() {
     document.getElementById("topbar").innerHTML =
       '<div class="brand"><span class="logo">' + DC.icon("cart") + '</span>DopaCart</div><div class="spacer"></div>' +
+      '<button class="topwish" id="topWish" aria-label="Preferiti">' + DC.icon("heart") + '<span class="tnum" id="wishN">0</span></button>' +
       '<div class="streak-pill">' + DC.icon("flame") + '<span class="tnum" id="streakN">0</span></div>';
     document.getElementById("bottomnav").innerHTML = NAV.map(function (n) {
       return '<button class="navbtn" data-route="' + n.route + '" data-hash="' + n.hash + '">' +
@@ -36,12 +37,15 @@ window.DC = window.DC || {};
     document.querySelectorAll(".navbtn").forEach(function (b) {
       b.addEventListener("click", function () { DC.fx.sound.tap(); DC.go(b.dataset.hash); });
     });
+    var tw = document.getElementById("topWish");
+    if (tw) tw.addEventListener("click", function () { DC.fx.sound.tap(); DC.go("#/wishlist"); });
   }
 
   DC.refreshNav = function (pop) {
     var n = DC.store.cartCount(), badge = document.getElementById("cartBadge");
     if (badge) { badge.textContent = n; badge.hidden = n === 0; if (pop) { badge.classList.remove("pop"); void badge.offsetWidth; badge.classList.add("pop"); } }
     var sn = document.getElementById("streakN"); if (sn) sn.textContent = DC.store.state.profile.streak.count;
+    var wn = document.getElementById("wishN"); if (wn) wn.textContent = DC.store.wishlistCount();
   };
 
   function setActive(route) {
@@ -64,6 +68,7 @@ window.DC = window.DC || {};
       checkout: function () { DC.views.checkout(view); return "cart"; },
       orders: function () { DC.views.orders(view); return "orders"; },
       track: function () { DC.views.track(view, { id: r.a }); return "orders"; },
+      wishlist: function () { DC.views.wishlist(view); return ""; },
       profile: function () { DC.views.profile(view); return "profile"; }
     };
     setActive((map[r.base] || map.home)());

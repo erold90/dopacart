@@ -19,6 +19,7 @@ window.DC = window.DC || {};
     cart: [],
     orders: [],
     recent: [],
+    wishlist: [],
     profile: {
       xp: 0, badges: [],
       streak: { count: 0, lastDay: null },
@@ -42,7 +43,7 @@ window.DC = window.DC || {};
       s.profile.savings = Object.assign({}, defaults.profile.savings, s.profile.savings);
       s.settings = Object.assign({}, defaults.settings, s.settings);
       s.variable = Object.assign({}, defaults.variable, s.variable);
-      s.cart = s.cart || []; s.orders = s.orders || []; s.recent = s.recent || [];
+      s.cart = s.cart || []; s.orders = s.orders || []; s.recent = s.recent || []; s.wishlist = s.wishlist || [];
       return s;
     } catch (e) { return JSON.parse(JSON.stringify(defaults)); }
   }
@@ -57,6 +58,15 @@ window.DC = window.DC || {};
     if (state.recent.length > 12) state.recent = state.recent.slice(0, 12);
     save();
   }
+
+  /* —— Preferiti (wishlist) —— */
+  function toggleWishlist(id) {
+    var i = state.wishlist.indexOf(id);
+    if (i >= 0) state.wishlist.splice(i, 1); else state.wishlist.unshift(id);
+    save(); return i < 0;
+  }
+  function inWishlist(id) { return state.wishlist.indexOf(id) >= 0; }
+  function wishlistCount() { return state.wishlist.length; }
 
   /* —— Carrello —— */
   function addToCart(id) {
@@ -177,6 +187,7 @@ window.DC = window.DC || {};
     xpProgress: xpProgress, addXp: addXp, levelFromXp: levelFromXp,
     touchStreak: touchStreak, addBadge: addBadge, hasBadge: hasBadge,
     addSavings: addSavings, canOpenMystery: canOpenMystery, markMystery: markMystery,
-    addRecent: addRecent, todayStr: todayStr
+    addRecent: addRecent, toggleWishlist: toggleWishlist, inWishlist: inWishlist, wishlistCount: wishlistCount,
+    todayStr: todayStr
   };
 })();

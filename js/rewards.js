@@ -84,6 +84,7 @@ DC.views = DC.views || {};
         '<div class="stat savings"><div class="ico-top">' + DC.icon("wallet") + ' In totale</div><div class="big tnum js-count" data-to="' + p.savings.totalFake + '" data-fmt="eur">' + DC.fx.euro(0) + '</div></div>' +
       '</div>' +
       '<button class="btn btn-ghost btn-block" id="shareSavings" style="margin-bottom:var(--sp-2)">' + DC.icon("share") + ' Condividi il mio risparmio</button>' +
+      '<button class="btn btn-ghost btn-block" id="goWish" style="margin-bottom:var(--sp-2)">' + DC.icon("heart") + ' I tuoi preferiti (' + s.wishlistCount() + ')</button>' +
 
       '<div class="section-title">' + DC.icon("trophy") + 'Collezione badge</div>' +
       '<div class="badges">' + DC.BADGES.map(function (b) {
@@ -132,6 +133,8 @@ DC.views = DC.views || {};
       else DC.fx.countUp(el, to);
     });
 
+    var gw = root.querySelector("#goWish");
+    if (gw) gw.addEventListener("click", function () { DC.fx.sound.tap(); DC.go("#/wishlist"); });
     var sh = root.querySelector("#shareSavings");
     if (sh) sh.addEventListener("click", function () {
       DC.fx.sound.tap();
