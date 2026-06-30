@@ -43,7 +43,7 @@ DC.views = DC.views || {};
     if (!DC.store.canOpenMystery()) { DC.fx.toast("Torna domani per un'altra sorpresa", { icon: "gift" }); return; }
     if (el) el.classList.add("shake");
     DC.fx.sound.pop(); DC.fx.buzz.medium();
-    var rewards = [{ xp: 15, msg: "+15 XP a sorpresa!" }, { xp: 25, msg: "+25 XP, che fortuna!" }, { xp: 40, msg: "Jackpot: +40 XP!" }, { xp: 10, msg: "+10 XP, ci sta!" }];
+    var rewards = [{ xp: 15, msg: "Niente male, dai." }, { xp: 25, msg: "Che fortuna!" }, { xp: 40, msg: "Jackpot assoluto!" }, { xp: 10, msg: "Ci sta, si riparte." }];
     var r = rewards[Math.floor(Math.random() * rewards.length)];
     setTimeout(function () {
       DC.store.markMystery();
@@ -76,12 +76,12 @@ DC.views = DC.views || {};
           '<div class="mt">Scatola mistero</div><div class="ms">Disponibile! Toccala</div></div>' : '') +
 
       '<div class="stat-row">' +
-        '<div class="stat streak"><div class="ico-top">' + DC.icon("flame") + ' Streak</div><div class="big tnum">' + p.streak.count + '</div></div>' +
-        '<div class="stat"><div class="ico-top">' + DC.icon("package") + ' Pacchi</div><div class="big tnum">' + delivered + '</div></div>' +
+        '<div class="stat streak"><div class="ico-top">' + DC.icon("flame") + ' Streak</div><div class="big tnum js-count" data-to="' + p.streak.count + '" data-fmt="int">0</div></div>' +
+        '<div class="stat"><div class="ico-top">' + DC.icon("package") + ' Pacchi</div><div class="big tnum js-count" data-to="' + delivered + '" data-fmt="int">0</div></div>' +
       '</div>' +
       '<div class="stat-row">' +
-        '<div class="stat savings"><div class="ico-top">' + DC.icon("piggy") + ' Questo mese</div><div class="big tnum">' + DC.fx.euro(p.savings.monthFake) + '</div></div>' +
-        '<div class="stat savings"><div class="ico-top">' + DC.icon("wallet") + ' In totale</div><div class="big tnum">' + DC.fx.euro(p.savings.totalFake) + '</div></div>' +
+        '<div class="stat savings"><div class="ico-top">' + DC.icon("piggy") + ' Questo mese</div><div class="big tnum js-count" data-to="' + p.savings.monthFake + '" data-fmt="eur">' + DC.fx.euro(0) + '</div></div>' +
+        '<div class="stat savings"><div class="ico-top">' + DC.icon("wallet") + ' In totale</div><div class="big tnum js-count" data-to="' + p.savings.totalFake + '" data-fmt="eur">' + DC.fx.euro(0) + '</div></div>' +
       '</div>' +
 
       '<div class="section-title">' + DC.icon("trophy") + 'Collezione badge</div>' +
@@ -103,6 +103,11 @@ DC.views = DC.views || {};
       t.addEventListener("click", function () {
         var k = t.dataset.toggle; s.state.settings[k] = !s.state.settings[k]; s.save(); DC.fx.sound.tap(); DC.views.profile(root);
       });
+    });
+    root.querySelectorAll(".js-count").forEach(function (el) {
+      var to = parseFloat(el.dataset.to) || 0;
+      if (el.dataset.fmt === "eur") DC.fx.countUp(el, to, function (v) { return DC.fx.euro(v); });
+      else DC.fx.countUp(el, to);
     });
   };
 

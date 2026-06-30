@@ -7,7 +7,6 @@ DC.views = DC.views || {};
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   DC.cleanupTrack = clearTimers;
   var LAST = function () { return DC.ORDER_STATES.length - 1; };
-  function courierPct(idx) { return 9 + (idx / LAST()) * 78; }
 
   function etaText(o) {
     var name = (o.ship && o.ship.name && o.ship.name !== "Tu") ? o.ship.name : "te";
@@ -23,9 +22,15 @@ DC.views = DC.views || {};
       p.title + " consegnato dal corriere immaginario. 0,00 € spesi.",
       "Pacco aperto: dentro c’era pura dopamina, e zero addebiti.",
       "Ta-daaa! Il tuo " + p.title + " è “tuo”. Il conto ringrazia.",
-      p.title + " recapitato in un universo dove hai risparmiato tutto."
+      p.title + " recapitato in un universo dove hai risparmiato tutto.",
+      "Scartato. Il " + p.title + " era bellissimo… per 0,3 secondi di pura gioia.",
+      "Consegna riuscita: hai provato l’ebbrezza, il portafoglio non se n’è accorto.",
+      "Il " + p.title + " ora vive nella tua immaginazione, rent-free."
     ];
     return L[Math.floor(Math.random() * L.length)];
+  }
+  function fmtDate(ts) {
+    return new Date(ts).toLocaleString("it-IT", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
   }
 
   DC.views.track = function (root, params) {
@@ -44,9 +49,17 @@ DC.views = DC.views || {};
       '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' Ordini</button>' +
       '<div class="h1">Il tuo pacco</div>' +
       '<div class="eta" id="eta"></div>' +
-      '<div class="tracker-map"><div class="road"></div>' +
-        '<div class="pinDest">' + DC.icon("mapPin") + '</div>' +
-        '<div class="courier" id="courier">' + DC.icon("truck") + '</div></div>' +
+      '<div class="tracker-map">' +
+        '<svg class="map-svg" viewBox="0 0 320 200" preserveAspectRatio="none" aria-hidden="true">' +
+          '<path id="roadPath" d="M16,170 C 72,170 60,86 132,92 S 246,150 306,50" fill="none" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12"/>' +
+        '</svg>' +
+        '<span class="lm" style="left:24%;top:33%">' + DC.icon("home") + '</span>' +
+        '<span class="lm tree" style="left:46%;top:74%"></span>' +
+        '<span class="lm" style="left:66%;top:40%">' + DC.icon("home") + '</span>' +
+        '<span class="lm tree" style="left:82%;top:78%"></span>' +
+        '<span class="dest">' + DC.icon("home") + '</span>' +
+        '<div class="courier" id="courier">' + DC.icon("truck") + '</div>' +
+      '</div>' +
 
       '<div class="timeline" id="timeline">' +
         DC.ORDER_STATES.map(function (st, i) {
@@ -71,8 +84,15 @@ DC.views = DC.views || {};
     if (etaEl) etaEl.innerHTML = '<div class="big">' + eta.big + '</div><small>' + eta.small + '</small>';
     var courier = root.querySelector("#courier");
     if (courier) {
-      courier.style.left = courierPct(o.stateIndex) + "%";
       courier.innerHTML = DC.icon(o.delivered ? "checkCircle" : "truck");
+      var path = root.querySelector("#roadPath");
+      if (path && path.getTotalLength) {
+        var pt = path.getPointAtLength(path.getTotalLength() * (o.stateIndex / LAST()));
+        courier.style.left = (pt.x / 320 * 100) + "%";
+        courier.style.top = (pt.y / 200 * 100) + "%";
+      } else {
+        courier.style.left = (9 + (o.stateIndex / LAST()) * 78) + "%";
+      }
     }
     for (var i = 0; i <= LAST(); i++) {
       var row = root.querySelector("#tl-" + i); if (!row) continue;
@@ -147,7 +167,7 @@ DC.views = DC.views || {};
         return '<div class="cart-item" data-go="' + o.id + '">' +
           '<div class="ci-thumb" style="--h:' + (first ? first.hue : 280) + '">' + DC.icon(o.delivered ? "checkCircle" : st.icon) + '</div>' +
           '<div class="ci-body"><div class="ci-title">' + o.items.length + (o.items.length === 1 ? ' articolo' : ' articoli') + ' · ' + DC.fx.euro(o.total) + '</div>' +
-          '<div class="tl-time">' + (o.delivered ? "Consegnato" : st.label) + '</div></div>' +
+          '<div class="tl-time">' + (o.delivered ? "Consegnato" : st.label) + ' · ' + fmtDate(o.createdAt) + '</div></div>' +
           DC.icon("chevronRight") + '</div>';
       }).join("") + '</div>';
     root.querySelectorAll("[data-go]").forEach(function (el) {

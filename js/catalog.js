@@ -5,6 +5,33 @@ DC.views = DC.views || {};
   function discount(p) { return Math.round((1 - p.price / p.list) * 100); }
   function rate(p) { return '<span class="rate">' + DC.icon("star") + ' ' + p.rating.toFixed(1) + ' <span style="color:var(--text-faint)">(' + p.reviews.toLocaleString("it-IT") + ')</span></span>'; }
 
+  var R_NAMES = ["Marco R.", "Giulia P.", "Luca D.", "Sara V.", "Andrea T.", "Chiara L.", "Davide F.", "Elena B.", "Matteo S.", "Francesca N.", "Paolo G.", "Ilaria C."];
+  var R_POS = [
+    "Spedizione finta, soddisfazione vera. Lo “riordino” domani.",
+    "Esattamente come me lo immaginavo. Anzi, di più.",
+    "Lo uso ogni giorno nella mia testa. Promosso a pieni voti.",
+    "Arrivato in un minuto col corriere immaginario. Top.",
+    "Non l’ho pagato e sto benissimo lo stesso.",
+    "Qualità percepita altissima, addebito pari a zero."
+  ];
+  var R_MILD = "Bello e d’impatto, ma mi aspettavo la “scatola” un filo più grande. Comunque ci sta.";
+  function buildReviews(p) {
+    var seed = 0; for (var i = 0; i < p.id.length; i++) seed += p.id.charCodeAt(i);
+    function pick(a, k) { return a[(seed + k) % a.length]; }
+    var out = [
+      { name: pick(R_NAMES, 1), stars: 5, date: "2 giorni fa", text: (p.quotes && p.quotes[0]) || pick(R_POS, 0) },
+      { name: pick(R_NAMES, 4), stars: 5, date: "1 settimana fa", text: pick(R_POS, seed + 2) },
+      { name: pick(R_NAMES, 7), stars: 4, date: "3 settimane fa", text: R_MILD }
+    ];
+    if (p.quotes && p.quotes[1]) out.splice(1, 0, { name: pick(R_NAMES, 9), stars: 5, date: "5 giorni fa", text: p.quotes[1] });
+    return out;
+  }
+  function reviewCard(r) {
+    var st = ""; for (var i = 0; i < 5; i++) st += '<span class="' + (i < r.stars ? "on" : "off") + '">' + DC.icon("star") + "</span>";
+    return '<div class="review"><div class="rev-top"><span class="stars">' + st + '</span><span class="rev-date">' + r.date + '</span></div>' +
+      '<div class="who">' + r.name + ' · acquirente verificato</div><p>“' + r.text + '”</p></div>';
+  }
+
   function productCard(p) {
     var tag = p.badges[0];
     return '' +
@@ -99,7 +126,6 @@ DC.views = DC.views || {};
   DC.views.product = function (root, params) {
     var p = DC.store.productById(params.id);
     if (!p) { root.innerHTML = emptyBox("search", "Prodotto non trovato"); return; }
-    var fiveStars = Array.from({ length: 5 }).map(function () { return DC.icon("star"); }).join("");
 
     root.innerHTML =
       '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' Indietro</button>' +
@@ -110,9 +136,7 @@ DC.views = DC.views || {};
         '<span class="disc">-' + discount(p) + '%</span></div>' +
       '<p class="pd-blurb">' + p.blurb + '</p>' +
       '<div class="section-title">' + DC.icon("star") + 'Recensioni</div>' +
-      '<div class="reviews">' + p.quotes.map(function (q) {
-        return '<div class="review"><div class="stars">' + fiveStars + '</div><div class="who">Acquirente verificato</div><p>“' + q + '”</p></div>';
-      }).join("") + '</div>' +
+      '<div class="reviews">' + buildReviews(p).map(reviewCard).join("") + '</div>' +
       '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="addBtn">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button></div>';
 
     root.querySelector("#back").addEventListener("click", function () { history.back(); });

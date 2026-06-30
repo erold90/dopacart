@@ -132,20 +132,39 @@ window.DC = window.DC || {};
     document.body.appendChild(ov);
     confetti({ count: opts.count || 150, y: innerHeight * 0.42 });
     if (opts.sound !== false) sound.success();
-    var closed = false;
-    function close() {
-      if (closed) return; closed = true;
-      ov.style.opacity = "0";
+    var closed = false, armed = false;
+    setTimeout(function () { armed = true; }, 320); // anti pass-through: ignora i tap nei primi 320ms
+    function close(e) {
+      if (e) { if (e.preventDefault) e.preventDefault(); if (e.stopPropagation) e.stopPropagation(); }
+      if (!armed || closed) return;
+      closed = true; ov.style.opacity = "0";
       setTimeout(function () { ov.remove(); if (opts.onClose) opts.onClose(); }, 280);
     }
     ov.addEventListener("click", close);
-    if (opts.auto !== false) setTimeout(close, opts.ms || 2900);
+    var sy = null;
+    ov.addEventListener("touchstart", function (e) { sy = e.touches[0].clientY; }, { passive: true });
+    ov.addEventListener("touchend", function (e) { if (sy != null && e.changedTouches[0].clientY - sy > 55) close(e); }, { passive: true });
+    if (opts.auto !== false) setTimeout(function () { armed = true; close(); }, opts.ms || 2900);
     return close;
+  }
+
+  /* —— Count-up animato (numeri ricompensa) —— */
+  function countUp(el, to, fmt, dur) {
+    if (!el) return;
+    if (prefersReduced || typeof requestAnimationFrame === "undefined") { el.textContent = fmt ? fmt(to) : String(Math.round(to)); return; }
+    var start = null; dur = dur || 750;
+    function step(ts) {
+      if (start === null) start = ts;
+      var t = Math.min(1, (ts - start) / dur), e = 1 - Math.pow(1 - t, 3), v = to * e;
+      el.textContent = fmt ? fmt(v) : String(Math.round(v));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
   }
 
   DC.fx = {
     euro: euro, stars: stars, sound: sound, buzz: buzz,
-    toast: toast, confetti: confetti, flyToCart: flyToCart, reveal: reveal,
+    toast: toast, confetti: confetti, flyToCart: flyToCart, reveal: reveal, countUp: countUp,
     reduced: prefersReduced
   };
 })();
