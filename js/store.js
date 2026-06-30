@@ -88,21 +88,21 @@ window.DC = window.DC || {};
     var sub = cartTotal();
     var discount = opts.discountAmt ? Math.min(sub, opts.discountAmt) : 0;
     var total = sub - discount;
-    // tempi compressi e leggermente variabili (rapporto variabile); ridotti se consegna express
-    var unit = Math.round(12000 * (opts.speedFactor || 1));
-    var schedule = DC.ORDER_STATES.map(function (s, i) {
-      var jitter = i === 0 ? 0 : Math.round((Math.random() * 0.5 + 0.75) * unit);
-      return jitter;
-    });
-    // cumulativo
+    // consegna realistica diversa per prodotto: giorni = max dei tempi-spedizione degli articoli
+    var dd = items.reduce(function (m, it) { var p = productById(it.productId); var d = (p && p.ship && p.ship.days) || 5; return Math.max(m, d); }, 1);
+    var etaAt = Date.now() + dd * 86400000;
+    // durata simulata del tracking PROPORZIONALE ai giorni (consegne lente = animazione più lunga), compressa in minuti
+    var totalMs = Math.min(100000, Math.max(16000, 14000 + dd * 3000));
+    var unit = totalMs / (DC.ORDER_STATES.length - 1);
+    var schedule = DC.ORDER_STATES.map(function (s, i) { return i === 0 ? 0 : Math.round((Math.random() * 0.4 + 0.8) * unit); });
     var acc = 0, offsets = schedule.map(function (j) { acc += j; return acc; });
     var order = {
       id: "o" + Date.now(),
       items: items, total: total, discount: discount,
-      ship: ship || {}, speedFactor: opts.speedFactor || 1,
+      ship: ship || {}, deliveryDays: dd, etaAt: etaAt,
       createdAt: Date.now(),
       stateIndex: 0,
-      offsets: offsets,           // ms dall'inizio per raggiungere ogni stato
+      offsets: offsets,           // ms dall'inizio per raggiungere ogni stato (compressi)
       timeline: [{ state: "CONFERMATO", at: Date.now() }],
       delivered: false
     };

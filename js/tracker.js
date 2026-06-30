@@ -8,12 +8,13 @@ DC.views = DC.views || {};
   DC.cleanupTrack = clearTimers;
   var LAST = function () { return DC.ORDER_STATES.length - 1; };
 
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function fmtEta(ts) { return cap(new Date(ts).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" })); }
   function etaText(o) {
     var name = (o.ship && o.ship.name && o.ship.name !== "Tu") ? o.ship.name : "te";
-    var remaining = Math.max(0, Math.round((o.offsets[LAST()] - (Date.now() - o.createdAt)) / 1000));
-    if (o.delivered || remaining <= 0) return { big: "Consegnato", small: "Goditi la dopamina, a costo zero" };
-    var t = remaining < 60 ? ("~" + remaining + " s") : ("~" + Math.ceil(remaining / 60) + " min");
-    return { big: "Arrivo tra " + t, small: "Stiamo arrivando da " + name };
+    if (o.delivered) return { big: "Consegnato", small: "Goditi la dopamina, a costo zero" };
+    var eta = o.etaAt || (o.createdAt + 3 * 86400000);
+    return { big: "Arrivo: " + fmtEta(eta), small: "Stiamo arrivando da " + name };
   }
 
   function deliveryLine(p) {

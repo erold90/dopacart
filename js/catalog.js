@@ -221,7 +221,7 @@ DC.views = DC.views || {};
         '<span class="u-left">' + DC.icon("bolt") + ' Solo <b>' + lc.left + '</b> rimasti a questo prezzo</span>' +
         '<span class="u-view">' + DC.icon("eye") + ' <b id="viewN">' + lc.viewing + '</b> lo stanno guardando</span>' +
       '</div>' +
-      '<div class="delivery">' + DC.icon("truck") + ' Ricevilo (per finta) <b>entro domani</b> · spedizione 0,00 €</div>' +
+      '<div class="delivery">' + DC.icon("truck") + ' Spedizione 0,00 € · <b>' + (p.ship ? p.ship.label : 'Consegna in pochi giorni') + '</b></div>' +
       '<p class="pd-blurb">' + p.blurb + '</p>' +
 
       '<div class="fbt"><div class="fbt-h">' + DC.icon("plusCircle") + ' Spesso comprati insieme</div>' +
