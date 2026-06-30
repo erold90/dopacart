@@ -91,12 +91,18 @@ window.DC = window.DC || {};
 
   function boot() {
     buildChrome();
-    if (!location.hash) location.hash = "#/home";
-    window.addEventListener("hashchange", render);
-    onboarding(render);
     if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
       navigator.serviceWorker.register("sw.js").catch(function () {});
     }
+    var view = document.getElementById("view");
+    view.innerHTML = '<div class="empty"><div class="em">' + DC.icon("cart") + '</div><div class="et">Carico il negozio…</div><p>Un attimo, sto riempiendo gli scaffali.</p></div>';
+    DC.loadCatalog().then(function () {
+      if (!location.hash) location.hash = "#/home";
+      window.addEventListener("hashchange", render);
+      onboarding(render);
+    }).catch(function () {
+      view.innerHTML = '<div class="empty"><div class="em">' + DC.icon("x") + '</div><div class="et">Catalogo non disponibile</div><p>Controlla la connessione e ricarica.</p></div>';
+    });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();
