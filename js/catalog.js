@@ -84,10 +84,11 @@ DC.views = DC.views || {};
   ];
   function sample(pool, n) { return pool.slice().sort(function () { return Math.random() - 0.5; }).slice(0, n); }
 
+  function notFood(p) { return p.cat !== "food"; } // gli alimenti non vanno in vetrina/in cima (fanno ridere come hero)
   function renderShowcase(root, idx) {
     var m = SC_MODES[idx % SC_MODES.length];
-    var pool = m.badge ? DC.catalog.products.filter(function (p) { return p.badges.indexOf(m.badge) >= 0; }) : DC.catalog.products;
-    if (pool.length < 4) pool = DC.catalog.products;
+    var pool = (m.badge ? DC.catalog.products.filter(function (p) { return p.badges.indexOf(m.badge) >= 0; }) : DC.catalog.products).filter(notFood);
+    if (pool.length < 4) pool = DC.catalog.products.filter(notFood);
     var items = sample(pool, 8);
     var title = root.querySelector("#scTitle"), grid = root.querySelector("#scGrid"), dots = root.querySelector("#scDots");
     if (!title || !grid) return;
@@ -211,7 +212,9 @@ DC.views = DC.views || {};
       '<div class="grid" id="grid"></div>' +
       '<div id="ioSentinel" class="io-sentinel">' + Array.from({ length: 2 }).map(function () { return '<div class="sk sk-card"></div>'; }).join("") + '</div>';
 
-    ibase = activeCat === "all" ? DC.catalog.products.slice() : DC.catalog.products.filter(function (p) { return p.cat === activeCat; });
+    if (activeCat === "all") {
+      ibase = DC.catalog.products.filter(notFood).concat(DC.catalog.products.filter(function (p) { return p.cat === "food"; }));
+    } else ibase = DC.catalog.products.filter(function (p) { return p.cat === activeCat; });
     iwork = ibase.slice(); ipage = 0;
     appendPage(body); // prima pagina subito
     var sentinel = body.querySelector("#ioSentinel");

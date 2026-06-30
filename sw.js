@@ -1,5 +1,5 @@
 /* DopaCart — Service Worker: shell offline-first + cache runtime immagini esterne. */
-var CACHE = "dopacart-v16";
+var CACHE = "dopacart-v17";
 var IMG = "dopacart-img"; // immagini esterne (loremflickr/flickr): persiste tra le versioni
 var ASSETS = [
   "./", "index.html", "manifest.webmanifest",
