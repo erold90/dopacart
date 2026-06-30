@@ -83,7 +83,7 @@ window.DC = window.DC || {};
     opts = opts || {};
     var items = state.cart.map(function (l) {
       var p = productById(l.productId);
-      return { productId: p.id, qty: l.qty, price: p.price, title: p.title, emoji: p.emoji, hue: p.hue };
+      return { productId: p.id, qty: l.qty, price: p.price, title: p.title, hue: p.hue };
     });
     var sub = cartTotal();
     var discount = opts.discountAmt ? Math.min(sub, opts.discountAmt) : 0;

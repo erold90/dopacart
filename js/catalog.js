@@ -62,8 +62,9 @@ DC.views = DC.views || {};
   /* —— HOME —— */
   DC.views.home = function (root) {
     var s = DC.store;
-    var offerte = DC.catalog.products.filter(function (p) { return p.badges.indexOf("offerta") >= 0; });
-    var offIds = offerte.map(function (p) { return p.id; });
+    var offerteAll = DC.catalog.products.filter(function (p) { return p.badges.indexOf("offerta") >= 0; });
+    var offIds = offerteAll.map(function (p) { return p.id; });
+    var offerte = offerteAll.slice(0, 8);
     var perTe = DC.catalog.products.filter(function (p) { return offIds.indexOf(p.id) < 0; }).sort(function () { return Math.random() - 0.5; }).slice(0, 8);
     var recent = s.state.recent.map(function (id) { return s.productById(id); }).filter(Boolean).slice(0, 8);
     var canMystery = s.canOpenMystery();
@@ -113,7 +114,8 @@ DC.views = DC.views || {};
   /* —— CATALOGO: ricerca + ricerche popolari + scroll infinito —— */
   var activeCat = "all", query = "";
   var POPULAR = ["cuffie", "caffè", "sneakers", "gaming", "smartwatch", "regalo", "casa"];
-  var io = null, ipage = 0, ibase = [];
+  var io = null, ipage = 0, ibase = [], iwork = [];
+  var PAGE = 16;
 
   function searchResults(q) {
     var s = q.trim().toLowerCase();
@@ -160,9 +162,8 @@ DC.views = DC.views || {};
       '<div class="grid" id="grid"></div>' +
       '<div id="ioSentinel" class="io-sentinel">' + Array.from({ length: 2 }).map(function () { return '<div class="sk sk-card"></div>'; }).join("") + '</div>';
 
-    var grid = body.querySelector("#grid");
     ibase = activeCat === "all" ? DC.catalog.products.slice() : DC.catalog.products.filter(function (p) { return p.cat === activeCat; });
-    ipage = 0;
+    iwork = ibase.slice(); ipage = 0;
     appendPage(body); // prima pagina subito
     var sentinel = body.querySelector("#ioSentinel");
     if ("IntersectionObserver" in window) {
@@ -183,11 +184,13 @@ DC.views = DC.views || {};
   function appendPage(body) {
     var grid = body.querySelector("#grid"), sentinel = body.querySelector("#ioSentinel");
     if (!grid) return;
+    var start = ipage * PAGE;
+    while (iwork.length < start + PAGE && ibase.length) iwork = iwork.concat(shuffleBy(ibase, iwork.length)); // ricicla = pozzo senza fondo
+    var slice = iwork.slice(start, start + PAGE);
     ipage++;
-    var list = ipage === 1 ? ibase : shuffleBy(ibase, ipage);
-    grid.insertAdjacentHTML("beforeend", list.map(function (p) { return productCard(p); }).join(""));
+    grid.insertAdjacentHTML("beforeend", slice.map(function (p) { return productCard(p); }).join(""));
     bindCards(grid);
-    if (ipage >= 7 && sentinel) { if (io) io.disconnect(); sentinel.remove(); } // bottomless ma con un limite di DOM
+    if (ipage >= 12 && sentinel) { if (io) io.disconnect(); sentinel.remove(); } // limite DOM (~192 card)
   }
 
   /* —— SCHEDA PRODOTTO —— */
@@ -232,7 +235,7 @@ DC.views = DC.views || {};
       '</div>' +
 
       '<div class="section-title">' + DC.icon("star") + 'Recensioni</div>' +
-      '<div class="reviews">' + buildReviews(p).map(reviewCard).join("") + '</div>' +
+      '<div class="reviews">' + (p.revs && p.revs.length ? p.revs.map(reviewCard).join("") : '<p class="sub">Ancora nessuna recensione.</p>') + '</div>' +
 
       '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="addBtn">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button></div>';
 
