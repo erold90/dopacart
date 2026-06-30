@@ -144,7 +144,8 @@ window.DC = window.DC || {};
     var sy = null;
     ov.addEventListener("touchstart", function (e) { sy = e.touches[0].clientY; }, { passive: true });
     ov.addEventListener("touchend", function (e) { if (sy != null && e.changedTouches[0].clientY - sy > 55) close(e); }, { passive: true });
-    if (opts.auto !== false) setTimeout(function () { armed = true; close(); }, opts.ms || 2900);
+    // Di default NON si autochiude: il climax resta finché l'utente non tocca/swipe (vedi report v3).
+    if (opts.auto === true) setTimeout(function () { armed = true; close(); }, opts.ms || 4000);
     return close;
   }
 

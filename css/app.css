@@ -319,7 +319,8 @@ a{color:inherit;text-decoration:none}
 .reveal-burst::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px dashed oklch(1 0 0/.4);animation:spin 9s linear infinite}
 @keyframes burst{0%{transform:scale(0) rotate(-25deg)}100%{transform:scale(1) rotate(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.reveal-burst .ic{width:62px;height:62px;color:oklch(1 0 0/.97);stroke-width:1.7}
+.reveal-burst .ic{width:62px;height:62px;color:oklch(1 0 0/.97);stroke-width:1.7;animation:revPulse 2.4s var(--ease-out) infinite;animation-delay:.7s}
+@keyframes revPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
 .reveal-title{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:800;letter-spacing:-.035em;line-height:1.02}
 .reveal-sub{opacity:.94;margin-top:var(--sp-2);font-size:var(--fs-sm);line-height:1.5}
 .reveal-hint{margin-top:var(--sp-5);font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.14em;font-weight:700}

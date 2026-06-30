@@ -17,15 +17,16 @@ DC.views = DC.views || {};
   }
 
   function deliveryLine(p) {
+    var t = "«" + p.title + "»";
     var L = [
-      "Il tuo " + p.title + " è atterrato. Non esiste, ma che soddisfazione.",
-      p.title + " consegnato dal corriere immaginario. 0,00 € spesi.",
-      "Pacco aperto: dentro c’era pura dopamina, e zero addebiti.",
-      "Ta-daaa! Il tuo " + p.title + " è “tuo”. Il conto ringrazia.",
-      p.title + " recapitato in un universo dove hai risparmiato tutto.",
-      "Scartato. Il " + p.title + " era bellissimo… per 0,3 secondi di pura gioia.",
-      "Consegna riuscita: hai provato l’ebbrezza, il portafoglio non se n’è accorto.",
-      "Il " + p.title + " ora vive nella tua immaginazione, rent-free."
+      "Pacco consegnato: " + t + ". Non esisteva, ma che soddisfazione.",
+      "Consegna riuscita. Dentro: " + t + ". Dopamina pura, 0,00 € spesi.",
+      t + " recapitato dal corriere immaginario. Il conto ringrazia.",
+      "Ta-daaa! " + t + " è servito: 0,3 secondi di gioia pura.",
+      t + ": brivido provato, portafoglio illeso.",
+      "Pacco aperto: dentro c’era solo pura dopamina, e zero addebiti.",
+      t + " ora vive nella tua testa, rent-free.",
+      "Consegnato in un universo dove hai risparmiato tutto: " + t + "."
     ];
     return L[Math.floor(Math.random() * L.length)];
   }
