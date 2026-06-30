@@ -58,6 +58,24 @@ DC.PRODUCT_ICON = {
 DC.CAT_ICON = { all:"sparkles", tech:"cpu", home:"home", fashion:"shirt", beauty:"droplet", fun:"gamepad" };
 DC.iconFor = function (p) { return DC.PRODUCT_ICON[p.id] || "package"; };
 
+/* Foto reali via servizio esterno (loremflickr, keyword per prodotto). Fallback all'icona se non carica. */
+DC.PRODUCT_IMG = {
+  t1:"wireless,headphones", t2:"smartwatch", t3:"projector", t4:"mechanical,keyboard", t5:"power,bank",
+  h1:"espresso,machine", h2:"desk,lamp", h3:"bedding,sheets", h4:"aroma,diffuser", h5:"robot,vacuum",
+  f1:"sneakers", f2:"backpack", f3:"sunglasses", f4:"wristwatch",
+  b1:"hair,dryer", b2:"skincare,serum", b3:"perfume,bottle", b4:"electric,toothbrush",
+  g1:"game,controller", g2:"watercolor,paint", g3:"yoga,mat", g4:"drone", g5:"bluetooth,speaker"
+};
+DC.imgUrl = function (p, size) {
+  size = size || 500;
+  var kw = DC.PRODUCT_IMG[p.id] || p.cat;
+  var h = 0, s = p.id; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9999;
+  return "https://loremflickr.com/" + size + "/" + size + "/" + kw + "?lock=" + (h + 1);
+};
+DC.imgTag = function (p, size) {
+  return '<img class="pimg" src="' + DC.imgUrl(p, size) + '" alt="' + p.title + '" loading="lazy" onload="this.classList.add(\'on\')" onerror="this.remove()">';
+};
+
 /* Costruisce l'URL affiliato (placeholder: sostituire ASSOCIATE_TAG e l'ASIN reale via SiteStripe). */
 DC.affiliateUrl = function (product) {
   var q = encodeURIComponent(product.title);

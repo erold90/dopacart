@@ -1,5 +1,6 @@
-/* DopaCart — Service Worker: shell offline-first. */
-var CACHE = "dopacart-v6";
+/* DopaCart — Service Worker: shell offline-first + cache runtime immagini esterne. */
+var CACHE = "dopacart-v7";
+var IMG = "dopacart-img"; // immagini esterne (loremflickr/flickr): persiste tra le versioni
 var ASSETS = [
   "./", "index.html", "manifest.webmanifest",
   "assets/icon.svg", "assets/icon-192.png", "assets/icon-512.png",
@@ -14,7 +15,7 @@ self.addEventListener("install", function (e) {
 
 self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
+    return Promise.all(keys.filter(function (k) { return k !== CACHE && k !== IMG; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
 });
 
@@ -22,7 +23,21 @@ self.addEventListener("fetch", function (e) {
   var req = e.request;
   if (req.method !== "GET") return;
   var url = new URL(req.url);
-  if (url.origin !== location.origin) return; // font/cross-origin -> rete
+
+  // Cross-origin: cache-first solo per le immagini (foto prodotto); il resto va in rete
+  if (url.origin !== location.origin) {
+    if (req.destination === "image") {
+      e.respondWith(caches.open(IMG).then(function (c) {
+        return c.match(req).then(function (hit) {
+          var net = fetch(req).then(function (res) { if (res && res.status === 200) c.put(req, res.clone()); return res; }).catch(function () { return hit; });
+          return hit || net;
+        });
+      }));
+    }
+    return;
+  }
+
+  // Same-origin: cache-first sulla shell
   e.respondWith(
     caches.match(req).then(function (hit) {
       return hit || fetch(req).then(function (res) {

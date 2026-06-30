@@ -18,7 +18,7 @@ DC.views = DC.views || {};
     return '<article class="pcard" data-id="' + p.id + '">' +
         '<div class="tile" style="--h:' + p.hue + '">' +
           (tag ? '<span class="tag ' + tag + '">' + tag.replace("-", " ") + '</span>' : '') +
-          DC.icon(DC.iconFor(p)) +
+          DC.icon(DC.iconFor(p)) + DC.imgTag(p, 500) +
           '<button class="quickadd" data-add="' + p.id + '" aria-label="Aggiungi ' + p.title + ' al carrello">' + DC.icon("plus") + '</button>' +
         '</div>' +
         '<div class="body">' +
@@ -209,7 +209,7 @@ DC.views = DC.views || {};
 
     root.innerHTML =
       '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' Indietro</button>' +
-      '<div class="pd-hero" style="--h:' + p.hue + '">' + DC.icon(DC.iconFor(p)) + '</div>' +
+      '<div class="pd-hero" style="--h:' + p.hue + '">' + DC.icon(DC.iconFor(p)) + DC.imgTag(p, 800) + '</div>' +
       (isBest ? '<div class="rankline">' + DC.icon("trophy") + ' Bestseller n.' + rank + ' in ' + catName(p.cat) + '</div>' : '') +
       '<div class="pd-title">' + p.title + '</div>' +
       '<div class="pd-social">' + DC.icon("star") + p.rating.toFixed(1) + ' · ' + p.reviews.toLocaleString("it-IT") + ' recensioni · ' + lc.sold.toLocaleString("it-IT") + ' venduti</div>' +
@@ -224,7 +224,7 @@ DC.views = DC.views || {};
       '<div class="fbt"><div class="fbt-h">' + DC.icon("plusCircle") + ' Spesso comprati insieme</div>' +
         '<div class="fbt-row">' +
           [p].concat(addons).map(function (x, i) {
-            return (i ? '<span class="fbt-plus">+</span>' : '') + '<div class="fbt-item" style="--h:' + x.hue + '">' + DC.icon(DC.iconFor(x)) + '</div>';
+            return (i ? '<span class="fbt-plus">+</span>' : '') + '<div class="fbt-item" style="--h:' + x.hue + '">' + DC.icon(DC.iconFor(x)) + DC.imgTag(x, 200) + '</div>';
           }).join("") +
         '</div>' +
         '<div class="fbt-foot"><div><div class="fbt-tot tnum">' + DC.fx.euro(bundle) + '</div><div class="fbt-save">risparmi ' + DC.fx.euro(saving) + '</div></div>' +

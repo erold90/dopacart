@@ -34,7 +34,7 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
         lines.map(function (l) {
           var p = s.productById(l.productId);
           return '<div class="cart-item" data-id="' + p.id + '">' +
-            '<div class="ci-thumb" style="--h:' + p.hue + '">' + DC.icon(DC.iconFor(p)) + '</div>' +
+            '<div class="ci-thumb" style="--h:' + p.hue + '">' + DC.icon(DC.iconFor(p)) + DC.imgTag(p, 160) + '</div>' +
             '<div class="ci-body"><div class="ci-title">' + p.title + '</div><div class="ci-price tnum">' + DC.fx.euro(p.price * l.qty) + '</div></div>' +
             '<div class="qty"><button data-dec="' + p.id + '" aria-label="Diminuisci">' + DC.icon("minus") + '</button><span class="tnum">' + l.qty + '</span>' +
               '<button data-inc="' + p.id + '" aria-label="Aumenta">' + DC.icon("plus") + '</button></div></div>';
