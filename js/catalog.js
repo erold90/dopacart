@@ -65,13 +65,32 @@ DC.views = DC.views || {};
     return revs.slice(0, 4);
   }
 
-  /* —— HOME —— */
+  /* —— HOME: vetrina auto-ciclante (Più venduti → In promozione → Novità) —— */
+  var SC_MODES = [
+    { badge: "best-seller", title: "Più venduti", icon: "trophy" },
+    { badge: "offerta", title: "Offerte lampo", icon: "bolt", lightning: true },
+    { badge: "novità", title: "Novità", icon: "sparkles" }
+  ];
+  function sample(pool, n) { return pool.slice().sort(function () { return Math.random() - 0.5; }).slice(0, n); }
+
+  function renderShowcase(root, idx) {
+    var m = SC_MODES[idx % SC_MODES.length];
+    var pool = m.badge ? DC.catalog.products.filter(function (p) { return p.badges.indexOf(m.badge) >= 0; }) : DC.catalog.products;
+    if (pool.length < 4) pool = DC.catalog.products;
+    var items = sample(pool, 8);
+    var title = root.querySelector("#scTitle"), grid = root.querySelector("#scGrid"), dots = root.querySelector("#scDots");
+    if (!title || !grid) return;
+    title.innerHTML = DC.icon(m.icon) + m.title + (m.lightning ? '<span class="lz-time" id="lzTime">--:--:--</span>' : "");
+    function swap() {
+      grid.innerHTML = items.map(function (p) { return productCard(p, { lightning: !!m.lightning }); }).join("");
+      bindCards(grid); grid.classList.remove("out");
+      if (dots) dots.innerHTML = SC_MODES.map(function (_, i) { return '<span class="' + (i === idx % SC_MODES.length ? "on" : "") + '"></span>'; }).join("");
+    }
+    if (DC.fx.reduced) swap(); else { grid.classList.add("out"); setTimeout(swap, 320); }
+  }
+
   DC.views.home = function (root) {
     var s = DC.store;
-    var offerteAll = DC.catalog.products.filter(function (p) { return p.badges.indexOf("offerta") >= 0; });
-    var offIds = offerteAll.map(function (p) { return p.id; });
-    var offerte = offerteAll.slice(0, 8);
-    var perTe = DC.catalog.products.filter(function (p) { return offIds.indexOf(p.id) < 0; }).sort(function () { return Math.random() - 0.5; }).slice(0, 8);
     var recent = s.state.recent.map(function (id) { return s.productById(id); }).filter(Boolean).slice(0, 8);
     var canMystery = s.canOpenMystery();
 
@@ -83,33 +102,31 @@ DC.views = DC.views || {};
         '<button class="btn btn-action" id="heroCta">Inizia a riempire ' + DC.icon("arrowRight") + '</button>' +
         '<div class="floaties">' + ["headphones", "gamepad", "watch"].map(function (i) { return '<span>' + DC.icon(i) + '</span>'; }).join("") + '</div>' +
       '</section>' +
-
       (canMystery ?
         '<div class="mystery" id="homeMystery"><div class="box">' + DC.icon("gift") + '</div>' +
           '<div class="mt">Scatola mistero del giorno</div><div class="ms">Toccala per un bonus a sorpresa</div></div>' : '') +
-
-      '<div class="section-title">' + DC.icon("bolt") + 'Offerte lampo <span class="lz-time" id="lzTime">--:--:--</span></div>' +
-      '<div class="grid stagger">' + offerte.map(function (p) { return productCard(p, { lightning: true }); }).join("") + '</div>' +
-
+      '<div class="section-title sc-title" id="scTitle"></div>' +
+      '<div class="grid sc-grid" id="scGrid"></div>' +
+      '<div class="sc-dots" id="scDots"></div>' +
       (recent.length ?
         '<div class="section-title">' + DC.icon("eye") + 'Visti di recente</div>' +
-        '<div class="hscroll" id="recentRow">' + recent.map(function (p) { return productCard(p); }).join("") + '</div>' : "") +
+        '<div class="hscroll">' + recent.map(function (p) { return productCard(p); }).join("") + '</div>' : "");
 
-      '<div class="section-title">' + DC.icon("sparkles") + 'Pensati per te</div>' +
-      '<div class="grid stagger">' + perTe.map(function (p) { return productCard(p); }).join("") + '</div>';
-
-    bindCards(root);
     root.querySelector("#heroCta").addEventListener("click", function () { DC.fx.sound.tap(); DC.go("#/catalog"); });
     var mb = root.querySelector("#homeMystery");
     if (mb) mb.addEventListener("click", function () { DC.openMystery(mb); });
-    startLightning(root);
+    bindCards(root); // riga "visti di recente"
+
+    var idx = 0;
+    renderShowcase(root, 0);
+    DC.regTimer(setInterval(function () { idx++; renderShowcase(root, idx); }, 6000));
+    startLightning();
   };
 
-  function startLightning(root) {
-    var el = root.querySelector("#lzTime"); if (!el) return;
-    var WIN = 3 * 3600 * 1000;
+  function startLightning() {
     function tick() {
-      var now = Date.now(), r = Math.max(0, Math.ceil(now / WIN) * WIN - now);
+      var el = document.getElementById("lzTime"); if (!el) return;
+      var WIN = 3 * 3600 * 1000, now = Date.now(), r = Math.max(0, Math.ceil(now / WIN) * WIN - now);
       var h = Math.floor(r / 3600000), m = Math.floor(r % 3600000 / 60000), sec = Math.floor(r % 60000 / 1000);
       function z(n) { return (n < 10 ? "0" : "") + n; }
       el.textContent = z(h) + ":" + z(m) + ":" + z(sec);
@@ -122,11 +139,15 @@ DC.views = DC.views || {};
   var POPULAR = null;
   function popularSearches() {
     if (POPULAR) return POPULAR;
-    var freq = {}, stop = { della: 1, delle: 1, degli: 1, dello: 1, con: 1, per: 1, una: 1, uno: 1, the: 1, and: 1, with: 1, dei: 1, dal: 1, alla: 1 };
+    var freq = {}, stop = { della:1,delle:1,degli:1,dello:1,con:1,per:1,una:1,uno:1,the:1,and:1,with:1,dei:1,dal:1,alla:1,
+      your:1,this:1,that:1,from:1,for:1,new:1,pack:1,piece:1,pieces:1,size:1,color:1,colour:1,style:1,design:1,quality:1,
+      gift:1,free:1,logo:1,background:1,backgrounds:1,paylo:1,inch:1,wireless:1 };
     DC.catalog.products.forEach(function (p) {
       p.title.toLowerCase().split(/[^a-zàèéìòùç]+/).forEach(function (w) { if (w.length >= 4 && !stop[w]) freq[w] = (freq[w] || 0) + 1; });
     });
-    POPULAR = Object.keys(freq).filter(function (w) { return freq[w] >= 3; }).sort(function (a, b) { return freq[b] - freq[a]; }).slice(0, 7);
+    var pool = Object.keys(freq).filter(function (w) { return freq[w] >= 3; });
+    pool.sort(function () { return Math.random() - 0.5; }); // campione casuale: varia a ogni sessione
+    POPULAR = pool.slice(0, 7);
     if (POPULAR.length < 4) POPULAR = DC.catalog.categories.map(function (c) { return c.name.toLowerCase(); }).slice(0, 6);
     return POPULAR;
   }
