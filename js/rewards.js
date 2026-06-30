@@ -90,12 +90,14 @@ DC.views = DC.views || {};
         return '<div class="bdg ' + (owned ? "owned" : "locked") + '" title="' + b.name + '">' + DC.icon(b.icon) + '<span class="nm">' + b.name + '</span></div>';
       }).join("") + '</div>' +
 
+      '<div class="section-title">' + DC.icon("user") + 'Account</div>' +
+      '<div class="settings-card" id="acctCard"></div>' +
       '<div class="section-title">' + DC.icon("settings") + 'Impostazioni</div>' +
       '<div class="settings-card">' +
         toggleRow("sound", "Suoni", s.state.settings.sound) +
         toggleRow("haptics", "Vibrazione", s.state.settings.haptics) +
       '</div>' +
-      '<div class="disclaimer">DopaCart è intrattenimento a costo zero. Nessun dato lascia il tuo telefono.</div>';
+      '<div class="disclaimer">DopaCart è intrattenimento a costo zero. Buono shopping (finto).</div>';
 
     var pm = root.querySelector("#profMystery");
     if (pm) pm.addEventListener("click", function () { DC.openMystery(pm); });
@@ -104,6 +106,25 @@ DC.views = DC.views || {};
         var k = t.dataset.toggle; s.state.settings[k] = !s.state.settings[k]; s.save(); DC.fx.sound.tap(); DC.views.profile(root);
       });
     });
+
+    // —— Account (passwordless via email) ——
+    var acct = root.querySelector("#acctCard");
+    if (acct && DC.auth) {
+      if (DC.auth.isLoggedIn()) {
+        var ss = DC.auth.sess();
+        acct.innerHTML = '<div class="cart-row" style="padding:var(--sp-3) 0"><span><b>' + (ss.name || "Account") +
+          '</b><br><span class="sub" style="font-size:var(--fs-xs)">' + ss.email + '</span></span>' +
+          '<button class="chip" id="logout">Esci</button></div>';
+        acct.querySelector("#logout").addEventListener("click", function () { DC.auth.logout(); DC.fx.sound.tap(); DC.fx.toast("Disconnesso", { icon: "user" }); DC.views.profile(root); });
+      } else if (DC.auth.enabled()) {
+        acct.innerHTML = '<div style="padding:var(--sp-2) 0"><button class="btn btn-action btn-block" id="login">' + DC.icon("user") + ' Accedi / Registrati</button>' +
+          '<div class="disclaimer" style="margin-top:var(--sp-2)">Senza password: ti mandiamo un codice via email. I tuoi ordini ti seguono.</div></div>';
+        acct.querySelector("#login").addEventListener("click", function () { DC.auth.open(); });
+      } else {
+        acct.innerHTML = '<div class="disclaimer" style="padding:var(--sp-3) 0">Accesso via email in arrivo.</div>';
+      }
+    }
+
     root.querySelectorAll(".js-count").forEach(function (el) {
       var to = parseFloat(el.dataset.to) || 0;
       if (el.dataset.fmt === "eur") DC.fx.countUp(el, to, function (v) { return DC.fx.euro(v); });

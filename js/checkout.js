@@ -24,7 +24,7 @@ DC.views = DC.views || {};
     if (step === 1) {
       inner =
         '<div class="section-title" style="margin-top:0">' + DC.icon("mapPin") + 'Dove lo spediamo (per finta)</div>' +
-        '<div class="field"><label>Nome</label><input id="f-name" value="Tu" autocomplete="off"></div>' +
+        '<div class="field"><label>Nome</label><input id="f-name" value="' + ((DC.store.state.profile.name || "Tu").replace(/"/g, "")) + '" autocomplete="off"></div>' +
         '<div class="field"><label>Indirizzo</label><input id="f-addr" value="Via della Dopamina, 1" autocomplete="off"></div>' +
         '<div class="field"><label>Città</label><input id="f-city" value="Lecce" autocomplete="off"></div>' +
         '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="next">Continua</button></div>';

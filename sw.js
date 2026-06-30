@@ -1,12 +1,12 @@
 /* DopaCart — Service Worker: shell offline-first + cache runtime immagini esterne. */
-var CACHE = "dopacart-v9";
+var CACHE = "dopacart-v10";
 var IMG = "dopacart-img"; // immagini esterne (loremflickr/flickr): persiste tra le versioni
 var ASSETS = [
   "./", "index.html", "manifest.webmanifest",
   "assets/icon.svg", "assets/icon-192.png", "assets/icon-512.png",
   "css/tokens.css", "css/app.css",
   "data/catalog.js", "js/icons.js", "js/store.js", "js/fx.js", "js/catalog.js",
-  "js/cart.js", "js/checkout.js", "js/tracker.js", "js/rewards.js", "js/app.js"
+  "js/cart.js", "js/checkout.js", "js/tracker.js", "js/rewards.js", "js/auth.js", "js/app.js"
 ];
 
 self.addEventListener("install", function (e) {
