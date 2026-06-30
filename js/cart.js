@@ -78,7 +78,7 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
       var code = (root.querySelector("#coupon").value || "").trim().toUpperCase();
       if (code === "DOPA10") { DC.coupon = { code: "DOPA10", pct: 0.10 }; DC.fx.sound.success(); DC.fx.buzz.medium(); DC.fx.toast("Sconto -10% applicato!", { win: true, icon: "ticket" }); DC.views.cart(root); }
       else if (!code) { DC.fx.toast("Inserisci un codice", { icon: "ticket" }); }
-      else { DC.coupon = { code: null, pct: 0 }; DC.fx.buzz.light(); DC.fx.toast("Codice non valido", { icon: "x" }); DC.views.cart(root); }
+      else { DC.fx.buzz.light(); DC.fx.toast("Codice non valido", { icon: "x" }); DC.views.cart(root); } // non cancella un coupon valido già applicato
     });
     root.querySelector("#checkout").addEventListener("click", function () { DC.go("#/checkout"); });
 
