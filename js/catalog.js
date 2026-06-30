@@ -149,17 +149,17 @@ DC.views = DC.views || {};
   /* —— CATALOGO: ricerca + ricerche popolari + scroll infinito —— */
   var activeCat = "all", query = "";
   var POPULAR = null;
+  // whitelist editoriale: termini puliti e riconoscibili (no parole-rumore dai titoli)
+  var POP_CAND = ["tecnologia", "casa", "moda", "bellezza", "sport", "apple", "samsung", "sony", "lg", "hp",
+    "laptop", "gaming", "headphones", "speaker", "camera", "watch", "tablet", "monitor", "keyboard", "mouse",
+    "nike", "adidas", "dress", "shoes", "bag", "sunglasses", "ring", "necklace", "earrings", "sofa", "lamp",
+    "rug", "curtain", "pillow", "perfume", "lipstick", "mascara", "serum", "mug", "knife", "dyson", "philips",
+    "canon", "nintendo", "logitech", "chanel", "dior"];
   function popularSearches() {
     if (POPULAR) return POPULAR;
-    var freq = {}, stop = { della:1,delle:1,degli:1,dello:1,con:1,per:1,una:1,uno:1,the:1,and:1,with:1,dei:1,dal:1,alla:1,
-      your:1,this:1,that:1,from:1,for:1,new:1,pack:1,piece:1,pieces:1,size:1,color:1,colour:1,style:1,design:1,quality:1,
-      gift:1,free:1,logo:1,background:1,backgrounds:1,paylo:1,inch:1,wireless:1 };
-    DC.catalog.products.forEach(function (p) {
-      p.title.toLowerCase().split(/[^a-zàèéìòùç]+/).forEach(function (w) { if (w.length >= 4 && !stop[w]) freq[w] = (freq[w] || 0) + 1; });
-    });
-    var pool = Object.keys(freq).filter(function (w) { return freq[w] >= 3; });
-    pool.sort(function () { return Math.random() - 0.5; }); // campione casuale: varia a ogni sessione
-    POPULAR = pool.slice(0, 7);
+    var ok = POP_CAND.filter(function (t) { return searchResults(t).length >= 3; });
+    ok.sort(function () { return Math.random() - 0.5; }); // varia a ogni sessione, sempre fruttuosi e leggibili
+    POPULAR = ok.slice(0, 7);
     if (POPULAR.length < 4) POPULAR = DC.catalog.categories.map(function (c) { return c.name.toLowerCase(); }).slice(0, 6);
     return POPULAR;
   }
