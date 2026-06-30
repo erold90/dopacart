@@ -4,6 +4,7 @@ DC.views = DC.views || {};
 DC.coupon = DC.coupon || { code: null, pct: 0 };
 (function () {
   var GOAL = 150;
+  var dropCelebrated = false;
 
   DC.views.cart = function (root) {
     var s = DC.store, lines = s.state.cart;
@@ -79,5 +80,12 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
       else { DC.coupon = { code: null, pct: 0 }; DC.fx.buzz.light(); DC.fx.toast("Codice non valido", { icon: "x" }); DC.views.cart(root); }
     });
     root.querySelector("#checkout").addEventListener("click", function () { DC.go("#/checkout"); });
+
+    // Celebrazione "drop sbloccato" quando la barra raggiunge la soglia
+    if (sub >= GOAL && !dropCelebrated) {
+      dropCelebrated = true;
+      DC.fx.confetti({ count: 90 }); DC.fx.sound.success(); DC.fx.buzz.strong();
+      DC.fx.toast("Drop sbloccato! Spedizione express simulata", { win: true, icon: "bolt", ms: 2200 });
+    } else if (sub < GOAL) { dropCelebrated = false; }
   };
 })();

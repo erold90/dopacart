@@ -143,7 +143,7 @@ DC.views = DC.views || {};
     var totSav = DC.store.state.profile.savings.totalFake;
     DC.fx.buzz.win();
     DC.fx.reveal({
-      icon: DC.iconFor(first), title: "Consegnato!",
+      icon: DC.iconFor(first), img: first.img, title: "Consegnato!",
       sub: line + " · +" + res.xp + " XP · risparmiati " + DC.fx.euro(res.saved),
       variant: "reward",
       share: {

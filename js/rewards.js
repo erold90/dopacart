@@ -136,7 +136,7 @@ DC.views = DC.views || {};
     if (sh) sh.addEventListener("click", function () {
       DC.fx.sound.tap();
       if (!DC.share) return;
-      DC.share.share({
+      (DC.share.preview || DC.share.share)({
         title: "Comprato tutto, speso niente",
         bigStat: DC.fx.euro(p.savings.totalFake),
         headline: "RISPARMIATI (PER FINTA)",

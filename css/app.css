@@ -392,6 +392,14 @@ a{color:inherit;text-decoration:none}
 .reveal-share .ic{width:19px;height:19px;stroke-width:2.4}
 .reveal-share:active{transform:scale(.96)}
 .reveal-hint{margin-top:var(--sp-3);font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+.reveal-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:0;transition:opacity .35s var(--ease-out);z-index:1}
+.reveal-img.on{opacity:1}
+
+/* Anteprima share-card */
+.share-ov{position:fixed;inset:0;z-index:84;display:flex;align-items:center;justify-content:center;padding:var(--sp-5);background:oklch(0.14 0.03 290/.72);backdrop-filter:blur(12px);transition:opacity .25s;animation:ovIn .25s var(--ease-out)}
+.share-wrap{width:100%;max-width:330px;display:flex;flex-direction:column;gap:var(--sp-3)}
+.share-preview{width:100%;border-radius:var(--r-lg);box-shadow:var(--shadow-pop);display:block;animation:cardPop var(--dur-meso) var(--ease-pop)}
+.share-close{color:oklch(1 0 0/.85);font-weight:700;background:none;min-height:44px}
 
 /* ————— Auth (login passwordless, bottom sheet) ————— */
 .auth-ov{position:fixed;inset:0;z-index:58;display:flex;align-items:flex-end;justify-content:center;background:oklch(0.14 0.03 290/.55);backdrop-filter:blur(8px);transition:opacity .25s;animation:ovIn .25s var(--ease-out)}

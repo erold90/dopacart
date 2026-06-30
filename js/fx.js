@@ -124,7 +124,7 @@ window.DC = window.DC || {};
     ov.setAttribute("role", "dialog");
     ov.innerHTML =
       '<div class="reveal-card">' +
-        '<div class="reveal-burst">' + (DC.icon ? DC.icon(opts.icon || "gift") : "") + '</div>' +
+        '<div class="reveal-burst">' + (DC.icon ? DC.icon(opts.icon || "gift") : "") + (opts.img ? '<img class="reveal-img" src="' + opts.img + '" alt="" onload="this.classList.add(\'on\')" onerror="this.remove()">' : "") + '</div>' +
         '<div class="reveal-title">' + (opts.title || "") + '</div>' +
         (opts.sub ? '<div class="reveal-sub">' + opts.sub + '</div>' : '') +
         (opts.share ? '<button class="reveal-share" id="revShare">' + (DC.icon ? DC.icon("share") : "") + ' Condividi</button>' : '') +
@@ -143,7 +143,7 @@ window.DC = window.DC || {};
     }
     ov.addEventListener("click", close);
     var sb = ov.querySelector("#revShare");
-    if (sb) sb.addEventListener("click", function (e) { e.stopPropagation(); if (DC.share) DC.share.share(opts.share); });
+    if (sb) sb.addEventListener("click", function (e) { e.stopPropagation(); if (DC.share) (DC.share.preview || DC.share.share)(opts.share); });
     var sy = null;
     ov.addEventListener("touchstart", function (e) { sy = e.touches[0].clientY; }, { passive: true });
     ov.addEventListener("touchend", function (e) { if (sy != null && e.changedTouches[0].clientY - sy > 55) close(e); }, { passive: true });

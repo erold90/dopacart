@@ -96,10 +96,7 @@ window.DC = window.DC || {};
     return await new Promise(function (res) { c.toBlob(function (b) { res(b); }, "image/png", 0.95); });
   }
 
-  async function share(opts) {
-    opts = opts || {};
-    var blob;
-    try { blob = await buildBlob(opts); } catch (e) { if (DC.fx) DC.fx.toast("Impossibile creare l'immagine", { icon: "x" }); return; }
+  async function doShare(blob, opts) {
     var caption = opts.caption || ("Shopping su DopaCart: speso 0,00 €. https://" + siteUrl());
     var file = new File([blob], "dopacart.png", { type: "image/png" });
     try {
@@ -108,13 +105,38 @@ window.DC = window.DC || {};
         if (DC.fx) DC.fx.sound.tap();
         return;
       }
-    } catch (e) { return; /* utente ha annullato lo share */ }
-    // fallback: scarica + copia caption
+    } catch (e) { return; /* utente ha annullato lo share nativo */ }
     var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href = url; a.download = "dopacart.png"; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
     try { if (navigator.clipboard) navigator.clipboard.writeText(caption); } catch (e) {}
     if (DC.fx) DC.fx.toast("Immagine salvata, condividila dove vuoi!", { icon: "check", win: true, ms: 2400 });
   }
 
-  DC.share = { share: share, buildBlob: buildBlob, siteUrl: siteUrl };
+  async function share(opts) {
+    opts = opts || {};
+    var blob; try { blob = await buildBlob(opts); } catch (e) { if (DC.fx) DC.fx.toast("Impossibile creare l'immagine", { icon: "x" }); return; }
+    return doShare(blob, opts);
+  }
+
+  // Anteprima VISIBILE della card (secondo picco dopaminico) prima di condividere/scaricare
+  async function preview(opts) {
+    opts = opts || {};
+    var blob; try { blob = await buildBlob(opts); } catch (e) { return share(opts); }
+    var url = URL.createObjectURL(blob);
+    var ov = document.createElement("div"); ov.className = "share-ov";
+    ov.innerHTML =
+      '<div class="share-wrap">' +
+        '<img class="share-preview" src="' + url + '" alt="La tua card DopaCart">' +
+        '<button class="btn btn-action btn-block btn-lg" id="shDo">' + (DC.icon ? DC.icon("share") : "") + ' Condividi</button>' +
+        '<button class="share-close" id="shClose">Chiudi</button>' +
+      '</div>';
+    document.body.appendChild(ov);
+    if (DC.fx) { DC.fx.confetti({ count: 90, y: innerHeight * 0.28 }); if (DC.fx.sound) DC.fx.sound.pop(); if (DC.fx.buzz) DC.fx.buzz.medium(); }
+    function close() { ov.style.opacity = "0"; setTimeout(function () { ov.remove(); URL.revokeObjectURL(url); }, 250); }
+    ov.addEventListener("click", function (e) { if (e.target === ov) close(); });
+    ov.querySelector("#shClose").addEventListener("click", close);
+    ov.querySelector("#shDo").addEventListener("click", function () { doShare(blob, opts); });
+  }
+
+  DC.share = { share: share, preview: preview, buildBlob: buildBlob, siteUrl: siteUrl };
 })();

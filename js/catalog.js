@@ -58,6 +58,12 @@ DC.views = DC.views || {};
     return '<div class="review"><div class="rev-top"><span class="stars">' + st + '</span><span class="rev-date">' + r.date + '</span></div>' +
       '<div class="who">' + r.name + ' · acquirente verificato</div><p>“' + r.text + '”</p></div>';
   }
+  // Recensioni coerenti col rating: su prodotti molto votati nascondi le stroncature
+  function coherentRevs(p) {
+    var revs = (p.revs || []).slice().sort(function (a, b) { return b.stars - a.stars; });
+    if (p.rating >= 4.2) { var pos = revs.filter(function (r) { return r.stars >= 4; }); if (pos.length >= 2) revs = pos; }
+    return revs.slice(0, 4);
+  }
 
   /* —— HOME —— */
   DC.views.home = function (root) {
@@ -113,7 +119,17 @@ DC.views = DC.views || {};
 
   /* —— CATALOGO: ricerca + ricerche popolari + scroll infinito —— */
   var activeCat = "all", query = "";
-  var POPULAR = ["cuffie", "caffè", "sneakers", "gaming", "smartwatch", "regalo", "casa"];
+  var POPULAR = null;
+  function popularSearches() {
+    if (POPULAR) return POPULAR;
+    var freq = {}, stop = { della: 1, delle: 1, degli: 1, dello: 1, con: 1, per: 1, una: 1, uno: 1, the: 1, and: 1, with: 1, dei: 1, dal: 1, alla: 1 };
+    DC.catalog.products.forEach(function (p) {
+      p.title.toLowerCase().split(/[^a-zàèéìòùç]+/).forEach(function (w) { if (w.length >= 4 && !stop[w]) freq[w] = (freq[w] || 0) + 1; });
+    });
+    POPULAR = Object.keys(freq).filter(function (w) { return freq[w] >= 3; }).sort(function (a, b) { return freq[b] - freq[a]; }).slice(0, 7);
+    if (POPULAR.length < 4) POPULAR = DC.catalog.categories.map(function (c) { return c.name.toLowerCase(); }).slice(0, 6);
+    return POPULAR;
+  }
   var io = null, ipage = 0, ibase = [], iwork = [];
   var PAGE = 16;
 
@@ -155,7 +171,7 @@ DC.views = DC.views || {};
 
     var cats = [{ id: "all", name: "Tutto" }].concat(DC.catalog.categories);
     body.innerHTML =
-      '<div class="pop">' + POPULAR.map(function (t) { return '<button class="poptag" data-q="' + t + '">' + DC.icon("search") + t + '</button>'; }).join("") + '</div>' +
+      '<div class="pop">' + popularSearches().map(function (t) { return '<button class="poptag" data-q="' + t + '">' + DC.icon("search") + t + '</button>'; }).join("") + '</div>' +
       '<div class="chips">' + cats.map(function (c) {
         return '<button class="chip" data-cat="' + c.id + '" aria-pressed="' + (c.id === activeCat) + '">' + DC.icon(DC.CAT_ICON[c.id] || "sparkles") + c.name + '</button>';
       }).join("") + '</div>' +
@@ -202,9 +218,11 @@ DC.views = DC.views || {};
     var isBest = p.badges.indexOf("best-seller") >= 0;
     var rank = 1 + (hash(p.id) % 5);
 
-    // Spesso comprati insieme
-    var sameCat = DC.catalog.products.filter(function (x) { return x.cat === p.cat && x.id !== p.id; });
-    var addons = (sameCat.length >= 2 ? sameCat : sameCat.concat(DC.catalog.products.filter(function (x) { return x.cat !== p.cat && x.id !== p.id; }))).slice(0, 2);
+    // Spesso comprati insieme: stessa categoria + fascia di prezzo vicina (niente tazza + divano)
+    var pool = DC.catalog.products.filter(function (x) { return x.id !== p.id; });
+    var sameCat = pool.filter(function (x) { return x.cat === p.cat; });
+    var basis = sameCat.length >= 2 ? sameCat : pool;
+    var addons = basis.slice().sort(function (a, b) { return Math.abs(a.price - p.price) - Math.abs(b.price - p.price); }).slice(0, 2);
     var addSum = addons.reduce(function (t, x) { return t + x.price; }, 0);
     var bundle = p.price + addSum;
     var saving = Math.round(addSum * 0.15 * 100) / 100;
@@ -235,7 +253,7 @@ DC.views = DC.views || {};
       '</div>' +
 
       '<div class="section-title">' + DC.icon("star") + 'Recensioni</div>' +
-      '<div class="reviews">' + (p.revs && p.revs.length ? p.revs.map(reviewCard).join("") : '<p class="sub">Ancora nessuna recensione.</p>') + '</div>' +
+      '<div class="reviews">' + (function () { var rv = coherentRevs(p); return rv.length ? rv.map(reviewCard).join("") : '<p class="sub">Ancora nessuna recensione.</p>'; })() + '</div>' +
 
       '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="addBtn">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button></div>';
 
