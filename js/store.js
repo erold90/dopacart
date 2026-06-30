@@ -18,6 +18,7 @@ window.DC = window.DC || {};
   var defaults = {
     cart: [],
     orders: [],
+    recent: [],
     profile: {
       xp: 0, badges: [],
       streak: { count: 0, lastDay: null },
@@ -41,13 +42,21 @@ window.DC = window.DC || {};
       s.profile.savings = Object.assign({}, defaults.profile.savings, s.profile.savings);
       s.settings = Object.assign({}, defaults.settings, s.settings);
       s.variable = Object.assign({}, defaults.variable, s.variable);
-      s.cart = s.cart || []; s.orders = s.orders || [];
+      s.cart = s.cart || []; s.orders = s.orders || []; s.recent = s.recent || [];
       return s;
     } catch (e) { return JSON.parse(JSON.stringify(defaults)); }
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 
   function productById(id) { return DC.catalog.products.find(function (p) { return p.id === id; }); }
+
+  /* —— Visti di recente —— */
+  function addRecent(id) {
+    state.recent = state.recent.filter(function (x) { return x !== id; });
+    state.recent.unshift(id);
+    if (state.recent.length > 12) state.recent = state.recent.slice(0, 12);
+    save();
+  }
 
   /* —— Carrello —— */
   function addToCart(id) {
@@ -70,15 +79,17 @@ window.DC = window.DC || {};
   }
 
   /* —— Ordini —— */
-  function createOrder(ship) {
+  function createOrder(ship, opts) {
+    opts = opts || {};
     var items = state.cart.map(function (l) {
       var p = productById(l.productId);
       return { productId: p.id, qty: l.qty, price: p.price, title: p.title, emoji: p.emoji, hue: p.hue };
     });
-    var total = cartTotal();
-    // tempi compressi e leggermente variabili (rapporto variabile) — offset dallo "createdAt"
-    var base = [0, 1, 2, 3, 4, 5];
-    var unit = 12000; // 12s per step (MVP: anticipazione senza annoiare)
+    var sub = cartTotal();
+    var discount = opts.discountAmt ? Math.min(sub, opts.discountAmt) : 0;
+    var total = sub - discount;
+    // tempi compressi e leggermente variabili (rapporto variabile); ridotti se consegna express
+    var unit = Math.round(12000 * (opts.speedFactor || 1));
     var schedule = DC.ORDER_STATES.map(function (s, i) {
       var jitter = i === 0 ? 0 : Math.round((Math.random() * 0.5 + 0.75) * unit);
       return jitter;
@@ -87,8 +98,8 @@ window.DC = window.DC || {};
     var acc = 0, offsets = schedule.map(function (j) { acc += j; return acc; });
     var order = {
       id: "o" + Date.now(),
-      items: items, total: total,
-      ship: ship || {},
+      items: items, total: total, discount: discount,
+      ship: ship || {}, speedFactor: opts.speedFactor || 1,
       createdAt: Date.now(),
       stateIndex: 0,
       offsets: offsets,           // ms dall'inizio per raggiungere ogni stato
@@ -166,6 +177,6 @@ window.DC = window.DC || {};
     xpProgress: xpProgress, addXp: addXp, levelFromXp: levelFromXp,
     touchStreak: touchStreak, addBadge: addBadge, hasBadge: hasBadge,
     addSavings: addSavings, canOpenMystery: canOpenMystery, markMystery: markMystery,
-    todayStr: todayStr
+    addRecent: addRecent, todayStr: todayStr
   };
 })();

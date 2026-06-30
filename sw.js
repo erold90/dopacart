@@ -1,5 +1,5 @@
 /* DopaCart — Service Worker: shell offline-first. */
-var CACHE = "dopacart-v5";
+var CACHE = "dopacart-v6";
 var ASSETS = [
   "./", "index.html", "manifest.webmanifest",
   "assets/icon.svg", "assets/icon-192.png", "assets/icon-512.png",

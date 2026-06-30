@@ -34,6 +34,10 @@ window.DC = window.DC || {};
     boxes: '<path d="M9 3.5 5 5.5v4l4 2 4-2v-4z"/><path d="M5 13.5l-2.5 1.2v3.6L7 20.5l2.5-1.2"/><path d="M19 13.5l2.5 1.2v3.6L17 20.5l-2.5-1.2"/>',
     bell: '<path d="M6 9.5a6 6 0 0 1 12 0c0 4.5 2 5.5 2 5.5H4s2-1 2-5.5z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
     clipboard: '<rect x="5" y="5" width="14" height="16" rx="2"/><rect x="8.5" y="3" width="7" height="4" rx="1.4"/><path d="M9 13l2 2 4-4.2"/>',
+    eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    ticket: '<path d="M4 7.5h16a1 1 0 0 1 1 1V11a2 2 0 0 0 0 4v2.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V15a2 2 0 0 0 0-4V8.5a1 1 0 0 1 1-1z"/><path d="M14.5 7.5v11"/>',
+    plusCircle: '<circle cx="12" cy="12" r="9"/><path d="M12 8.5v7M8.5 12h7"/>',
+    bolt: '<path d="M13 2 5 13h6l-1 9 8-11h-6z"/>',
 
     /* — Categorie — */
     cpu: '<rect x="6.5" y="6.5" width="11" height="11" rx="2.5"/><path d="M9.5 2v3M14.5 2v3M9.5 19v3M14.5 19v3M2 9.5h3M2 14.5h3M19 9.5h3M19 14.5h3"/>',

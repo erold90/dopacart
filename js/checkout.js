@@ -18,7 +18,8 @@ DC.views = DC.views || {};
   };
 
   function paint(root) {
-    var s = DC.store, total = s.cartTotal(), inner;
+    var s = DC.store, inner;
+    var sub = s.cartTotal(), cpct = (DC.coupon && DC.coupon.pct) || 0, disc = sub * cpct, total = sub - disc;
 
     if (step === 1) {
       inner =
@@ -70,7 +71,10 @@ DC.views = DC.views || {};
   }
 
   function placeOrder() {
-    var o = DC.store.createOrder(ship);
+    var sub = DC.store.cartTotal();
+    var disc = sub * ((DC.coupon && DC.coupon.pct) || 0);
+    var o = DC.store.createOrder(ship, { discountAmt: disc });
+    DC.coupon = { code: null, pct: 0 };
     DC.fx.confetti({ count: 120, y: innerHeight * 0.5 });
     DC.fx.sound.success(); DC.fx.buzz.strong();
     DC.fx.toast("Ordine confermato! Il pacco è in viaggio", { win: true, icon: "check", ms: 2000 });

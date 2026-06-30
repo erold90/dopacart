@@ -306,6 +306,69 @@ a{color:inherit;text-decoration:none}
 .onb p{opacity:.92;max-width:28ch;position:relative;z-index:1}
 .onb .btn{position:relative;z-index:1;background:oklch(0.998 0.005 70);color:oklch(0.30 0.16 18)}
 
+/* ————— Ricerca + ricerche popolari ————— */
+.searchbar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-full);padding:0 var(--sp-4);margin-bottom:var(--sp-3);box-shadow:var(--shadow-soft)}
+.searchbar .si .ic{width:20px;height:20px;color:var(--text-faint)}
+.searchbar input{flex:1;border:none;background:none;min-height:50px;font:inherit;color:var(--text);outline:none}
+.pop{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;margin:0 calc(-1*var(--sp-4)) var(--sp-2);padding:0 var(--sp-4)}
+.pop::-webkit-scrollbar{display:none}
+.poptag{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:var(--r-full);background:var(--surface-2);font-size:var(--fs-sm);font-weight:600;color:var(--text-soft);white-space:nowrap}
+.poptag .ic{width:14px;height:14px}
+
+/* ————— Social proof / scarsità sulle card ————— */
+.cmeta{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:5px}
+.cmeta .sold{font-size:10px;color:var(--text-faint);font-weight:600}
+.cstock{margin-top:8px}
+.cstock-bar{height:5px;border-radius:var(--r-full);background:var(--surface-2);overflow:hidden}
+.cstock-bar span{display:block;height:100%;background:var(--grad-warm);border-radius:var(--r-full)}
+.cstock-l{font-size:10px;color:var(--action);font-weight:800;margin-top:3px}
+.lz-time{margin-left:auto;font-family:var(--font);font-variant-numeric:tabular-nums;font-size:var(--fs-sm);font-weight:800;color:var(--action);background:var(--action-soft);padding:3px 10px;border-radius:var(--r-full)}
+
+/* ————— Caroselli orizzontali (visti di recente) ————— */
+.hscroll{display:flex;gap:var(--sp-3);overflow-x:auto;scrollbar-width:none;margin:0 calc(-1*var(--sp-4));padding:var(--sp-1) var(--sp-4) var(--sp-2)}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll .pcard{flex:0 0 150px;width:150px}
+.io-sentinel{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3);margin-top:var(--sp-3)}
+
+/* ————— Scheda prodotto: rank, urgenza, consegna, bundle ————— */
+.rankline{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-xs);font-weight:800;color:oklch(0.48 0.12 75);background:oklch(0.82 0.14 78 / .25);padding:5px 10px;border-radius:var(--r-full);margin-bottom:var(--sp-2)}
+.rankline .ic{width:15px;height:15px}
+.urgency{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin:var(--sp-3) 0}
+.urgency span{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:600;padding:8px 12px;border-radius:var(--r-md)}
+.urgency .u-left{background:var(--action-soft);color:var(--action)}
+.urgency .u-view{background:var(--surface-2);color:var(--text-soft)}
+.urgency .ic{width:16px;height:16px}
+.urgency b{font-weight:800}
+.delivery{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--text-soft);margin-bottom:var(--sp-3)}
+.delivery .ic{width:18px;height:18px;color:var(--success)}
+.delivery b{color:var(--text)}
+.fbt{background:var(--surface);border-radius:var(--r-lg);padding:var(--sp-4);box-shadow:var(--shadow-soft);margin:var(--sp-5) 0}
+.fbt-h{display:flex;align-items:center;gap:6px;font-weight:700;margin-bottom:var(--sp-3)}
+.fbt-h .ic{width:18px;height:18px;color:var(--joy-violet)}
+.fbt-row{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:var(--sp-3)}
+.fbt-item{width:64px;height:64px;border-radius:var(--r-md);display:grid;place-items:center;background:radial-gradient(80% 80% at 30% 25%, oklch(0.93 0.11 var(--h)), oklch(0.86 0.12 var(--h)))}
+.fbt-item .ic{width:50%;height:50%;color:oklch(0.40 0.14 var(--h))}
+.fbt-plus{color:var(--text-faint);font-weight:800;font-size:var(--fs-lg)}
+.fbt-foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3)}
+.fbt-tot{font-family:var(--font-display);font-weight:800;font-size:var(--fs-lg);letter-spacing:-.02em}
+.fbt-save{font-size:var(--fs-xs);color:var(--success);font-weight:700}
+.fbt-foot .btn{min-height:44px;padding:0 var(--sp-4);font-size:var(--fs-sm)}
+
+/* ————— Carrello: upsell + coupon ————— */
+.upsell{margin-top:var(--sp-4);background:var(--surface);border-radius:var(--r-lg);padding:var(--sp-2) var(--sp-4) var(--sp-3);box-shadow:var(--shadow-soft)}
+.upsell-h{display:flex;align-items:center;gap:6px;font-weight:700;font-size:var(--fs-sm);margin:var(--sp-2) 0;color:var(--action)}
+.upsell-h .ic{width:16px;height:16px}
+.upsell-i{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) 0}
+.upsell-i .ci-thumb{width:46px;height:46px}
+.upsell-i .ci-thumb .ic{width:52%;height:52%}
+.upsell-i .quickadd{position:static;width:40px;height:40px;flex:0 0 auto}
+.coupon{display:flex;align-items:center;gap:8px;margin-top:var(--sp-4)}
+.coupon .cpico{width:48px;height:48px;border-radius:var(--r-md);background:var(--surface-2);color:var(--joy-violet);display:grid;place-items:center;flex:0 0 auto}
+.coupon .cpico .ic{width:22px;height:22px}
+.coupon input{flex:1;min-width:0;min-height:48px;padding:0 var(--sp-3);border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--surface);font:inherit;color:var(--text);outline:none}
+.coupon input:focus{border-color:var(--joy-blue)}
+.coupon .btn{min-height:48px;flex:0 0 auto}
+
 /* ————— Reveal overlay (mystery box + unboxing consegna) ————— */
 .reveal-ov{position:fixed;inset:0;z-index:76;display:flex;align-items:center;justify-content:center;padding:var(--sp-6);
   background:oklch(0.14 0.03 290/.6);backdrop-filter:blur(10px);transition:opacity .28s;animation:ovIn .28s var(--ease-out)}

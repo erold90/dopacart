@@ -11,6 +11,11 @@ window.DC = window.DC || {};
 
   DC.go = function (hash) { location.hash = hash; };
 
+  // Registry timer di vista (countdown offerte, "N lo stanno guardando"): puliti a ogni cambio schermata
+  DC._viewTimers = [];
+  DC.regTimer = function (id) { DC._viewTimers.push(id); return id; };
+  DC.clearViewTimers = function () { DC._viewTimers.forEach(function (id) { clearInterval(id); }); DC._viewTimers = []; };
+
   DC.addToCartFx = function (id, el) {
     DC.store.addToCart(id);
     DC.fx.sound.add(); DC.fx.buzz.light(); DC.fx.flyToCart(el);
@@ -48,6 +53,7 @@ window.DC = window.DC || {};
   function parse() { var h = location.hash.replace(/^#\/?/, ""), p = h.split("/"); return { base: p[0] || "home", a: p[1] }; }
   function render() {
     if (DC.cleanupTrack) DC.cleanupTrack();
+    if (DC.clearViewTimers) DC.clearViewTimers();
     var r = parse(), view = document.getElementById("view");
     window.scrollTo(0, 0);
     var map = {
