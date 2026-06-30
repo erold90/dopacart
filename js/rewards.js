@@ -83,6 +83,7 @@ DC.views = DC.views || {};
         '<div class="stat savings"><div class="ico-top">' + DC.icon("piggy") + ' Questo mese</div><div class="big tnum js-count" data-to="' + p.savings.monthFake + '" data-fmt="eur">' + DC.fx.euro(0) + '</div></div>' +
         '<div class="stat savings"><div class="ico-top">' + DC.icon("wallet") + ' In totale</div><div class="big tnum js-count" data-to="' + p.savings.totalFake + '" data-fmt="eur">' + DC.fx.euro(0) + '</div></div>' +
       '</div>' +
+      '<button class="btn btn-ghost btn-block" id="shareSavings" style="margin-bottom:var(--sp-2)">' + DC.icon("share") + ' Condividi il mio risparmio</button>' +
 
       '<div class="section-title">' + DC.icon("trophy") + 'Collezione badge</div>' +
       '<div class="badges">' + DC.BADGES.map(function (b) {
@@ -129,6 +130,20 @@ DC.views = DC.views || {};
       var to = parseFloat(el.dataset.to) || 0;
       if (el.dataset.fmt === "eur") DC.fx.countUp(el, to, function (v) { return DC.fx.euro(v); });
       else DC.fx.countUp(el, to);
+    });
+
+    var sh = root.querySelector("#shareSavings");
+    if (sh) sh.addEventListener("click", function () {
+      DC.fx.sound.tap();
+      if (!DC.share) return;
+      DC.share.share({
+        title: "Comprato tutto, speso niente",
+        bigStat: DC.fx.euro(p.savings.totalFake),
+        headline: "RISPARMIATI (PER FINTA)",
+        line: "Tutta la scarica dello shopping, zero sensi di colpa.",
+        savings: "Questo mese " + DC.fx.euro(p.savings.monthFake),
+        caption: "Su DopaCart ho “risparmiato” " + DC.fx.euro(p.savings.totalFake) + " facendo shopping finto. Provalo: https://" + DC.share.siteUrl()
+      });
     });
   };
 

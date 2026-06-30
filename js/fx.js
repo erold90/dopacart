@@ -127,6 +127,7 @@ window.DC = window.DC || {};
         '<div class="reveal-burst">' + (DC.icon ? DC.icon(opts.icon || "gift") : "") + '</div>' +
         '<div class="reveal-title">' + (opts.title || "") + '</div>' +
         (opts.sub ? '<div class="reveal-sub">' + opts.sub + '</div>' : '') +
+        (opts.share ? '<button class="reveal-share" id="revShare">' + (DC.icon ? DC.icon("share") : "") + ' Condividi</button>' : '') +
         '<div class="reveal-hint">tocca per continuare</div>' +
       '</div>';
     document.body.appendChild(ov);
@@ -141,6 +142,8 @@ window.DC = window.DC || {};
       setTimeout(function () { ov.remove(); if (opts.onClose) opts.onClose(); }, 280);
     }
     ov.addEventListener("click", close);
+    var sb = ov.querySelector("#revShare");
+    if (sb) sb.addEventListener("click", function (e) { e.stopPropagation(); if (DC.share) DC.share.share(opts.share); });
     var sy = null;
     ov.addEventListener("touchstart", function (e) { sy = e.touches[0].clientY; }, { passive: true });
     ov.addEventListener("touchend", function (e) { if (sy != null && e.changedTouches[0].clientY - sy > 55) close(e); }, { passive: true });

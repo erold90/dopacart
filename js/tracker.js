@@ -139,11 +139,18 @@ DC.views = DC.views || {};
     DC.refreshNav();
     if (silent || !res.granted) return;
     var first = DC.store.productById(o.items[0].productId);
+    var line = deliveryLine(first);
+    var totSav = DC.store.state.profile.savings.totalFake;
     DC.fx.buzz.win();
     DC.fx.reveal({
       icon: DC.iconFor(first), title: "Consegnato!",
-      sub: deliveryLine(first) + " · +" + res.xp + " XP · risparmiati " + DC.fx.euro(res.saved),
-      variant: "reward", ms: 3400,
+      sub: line + " · +" + res.xp + " XP · risparmiati " + DC.fx.euro(res.saved),
+      variant: "reward",
+      share: {
+        img: first.img, title: first.title, headline: "CONSEGNATO!", line: line,
+        savings: "Risparmiati " + DC.fx.euro(totSav) + " in totale",
+        caption: "Ho “ordinato” " + first.title + " su DopaCart: tutta la dopamina dello shopping, 0,00 € spesi. https://" + (DC.share ? DC.share.siteUrl() : "")
+      },
       onClose: function () {
         if (res.leveledUp) { DC.fx.sound.levelup(); DC.fx.toast("Livello " + res.level + "!", { win: true, icon: "trophy", ms: 2200 }); }
         res.newBadges.forEach(function (b, i) { setTimeout(function () { DC.fx.toast("Badge: " + b, { icon: "trophy", ms: 2000 }); }, 300 + i * 700); });
