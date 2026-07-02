@@ -83,13 +83,22 @@ DC.views = DC.views || {};
     { badge: "novità", title: "Novità", icon: "sparkles" }
   ];
   function sample(pool, n) { return pool.slice().sort(function () { return Math.random() - 0.5; }).slice(0, n); }
+  // Seed giornaliero (cambia una volta ogni 24h, a mezzanotte UTC): le offerte lampo del giorno restano fisse
+  function daySeed() { return Math.floor(Date.now() / 86400000); }
+  function dailyPick(pool, n, seed) {
+    var a = pool.slice(), s = (seed ^ 0x9e3779b9) >>> 0;
+    function rnd() { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a.slice(0, n);
+  }
 
   function notFood(p) { return p.cat !== "food"; } // gli alimenti non vanno in vetrina/in cima (fanno ridere come hero)
   function renderShowcase(root, idx) {
     var m = SC_MODES[idx % SC_MODES.length];
     var pool = (m.badge ? DC.catalog.products.filter(function (p) { return p.badges.indexOf(m.badge) >= 0; }) : DC.catalog.products).filter(notFood);
     if (pool.length < 4) pool = DC.catalog.products.filter(notFood);
-    var items = sample(pool, 8);
+    // Offerte lampo = set FISSO del giorno (refresh ogni 24h); le altre sezioni ruotano varie
+    var items = m.lightning ? dailyPick(pool, 8, daySeed()) : sample(pool, 8);
     var title = root.querySelector("#scTitle"), grid = root.querySelector("#scGrid"), dots = root.querySelector("#scDots");
     if (!title || !grid) return;
     function swap() {
@@ -138,7 +147,7 @@ DC.views = DC.views || {};
   function startLightning() {
     function tick() {
       var el = document.getElementById("lzTime"); if (!el) return;
-      var WIN = 3 * 3600 * 1000, now = Date.now(), r = Math.max(0, Math.ceil(now / WIN) * WIN - now);
+      var WIN = 24 * 3600 * 1000, now = Date.now(), r = Math.max(0, Math.ceil(now / WIN) * WIN - now);
       var h = Math.floor(r / 3600000), m = Math.floor(r % 3600000 / 60000), sec = Math.floor(r % 60000 / 1000);
       function z(n) { return (n < 10 ? "0" : "") + n; }
       el.textContent = z(h) + ":" + z(m) + ":" + z(sec);
