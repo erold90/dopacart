@@ -1,7 +1,7 @@
 /* DopaCart — donazioni via Ko-fi (0% commissioni, incassi sul TUO PayPal/Stripe). Nessun backend.
    IMPOSTA DC.KOFI_USER col tuo handle Ko-fi per attivare (es. "dopacart" -> ko-fi.com/dopacart). Vuoto = dormiente. */
 window.DC = window.DC || {};
-DC.KOFI_USER = ""; // es. "dopacart"
+DC.KOFI_USER = "dopacart"; // ko-fi.com/dopacart (PayPal collegato)
 (function () {
   function enabled() { return !!DC.KOFI_USER; }
   function go() {
