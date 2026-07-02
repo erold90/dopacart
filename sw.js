@@ -2,13 +2,13 @@
    SHELL (html/css/js) = NETWORK-FIRST → l'app è sempre aggiornata online (niente audit/utenti su versioni vecchie); la cache è solo fallback offline.
    catalog.json = stale-while-revalidate (istantaneo da cache + aggiorna in background).
    Immagini esterne = cache-first (persistono tra le versioni). */
-var CACHE = "dopacart-v25";
+var CACHE = "dopacart-v26";
 var IMG = "dopacart-img";
 var ASSETS = [
   "./", "index.html", "manifest.webmanifest",
   "assets/icon.svg", "assets/icon-192.png", "assets/icon-512.png",
   "css/tokens.css", "css/app.css",
-  "data/catalog.js", "js/icons.js", "js/store.js", "js/fx.js", "js/catalog.js",
+  "data/catalog.js", "js/icons.js", "js/store.js", "js/fx.js", "js/wallet.js", "js/catalog.js",
   "js/cart.js", "js/checkout.js", "js/tracker.js", "js/rewards.js", "js/auth.js", "js/sync.js", "js/share.js", "js/donate.js", "js/app.js"
 ];
 

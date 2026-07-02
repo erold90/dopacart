@@ -23,7 +23,9 @@ window.DC = window.DC || {};
     profile: {
       xp: 0, badges: [],
       streak: { count: 0, lastDay: null },
-      savings: { month: monthStr(), monthFake: 0, totalFake: 0 }
+      savings: { month: monthStr(), monthFake: 0, totalFake: 0 },
+      addresses: [], defaultAddressId: null,
+      payment: { method: "card", cardId: "dopacard" }
     },
     settings: { sound: true, haptics: true },
     variable: { lastMysteryDay: null },
@@ -89,13 +91,10 @@ window.DC = window.DC || {};
   }
 
   /* —— Ordini —— */
-  function createOrder(ship, opts) {
+  function itemFrom(l) { var p = productById(l.productId); return { productId: p.id, qty: l.qty, price: p.price, title: p.title, hue: p.hue }; }
+  function buildOrder(items, ship, opts) {
     opts = opts || {};
-    var items = state.cart.map(function (l) {
-      var p = productById(l.productId);
-      return { productId: p.id, qty: l.qty, price: p.price, title: p.title, hue: p.hue };
-    });
-    var sub = cartTotal();
+    var sub = items.reduce(function (t, it) { return t + it.price * it.qty; }, 0);
     var discount = opts.discountAmt ? Math.min(sub, opts.discountAmt) : 0;
     var total = sub - discount;
     // consegna realistica diversa per prodotto: giorni = max dei tempi-spedizione degli articoli
@@ -109,7 +108,7 @@ window.DC = window.DC || {};
     var order = {
       id: "o" + Date.now(),
       items: items, total: total, discount: discount,
-      ship: ship || {}, deliveryDays: dd, etaAt: etaAt,
+      ship: ship || {}, payment: opts.payment || null, deliveryDays: dd, etaAt: etaAt,
       createdAt: Date.now(),
       stateIndex: 0,
       offsets: offsets,           // ms dall'inizio per raggiungere ogni stato (compressi)
@@ -117,10 +116,39 @@ window.DC = window.DC || {};
       delivered: false
     };
     state.orders.unshift(order);
-    clearCart();
     save();
     return order;
   }
+  function createOrder(ship, opts) { var o = buildOrder(state.cart.map(itemFrom), ship, opts); clearCart(); return o; }
+  function buyNow(productId, ship, opts) {
+    var p = productById(productId); if (!p) return null;
+    return buildOrder([{ productId: p.id, qty: 1, price: p.price, title: p.title, hue: p.hue }], ship, opts);
+  }
+
+  /* —— Rubrica indirizzi —— */
+  function touchWallet() { state.profile.walletUpdatedAt = Date.now(); }
+  function addresses() { return state.profile.addresses; }
+  function defaultAddress() {
+    var a = state.profile.addresses;
+    return a.find(function (x) { return x.id === state.profile.defaultAddressId; }) || a[0] || null;
+  }
+  function saveAddress(addr) {
+    var a = state.profile.addresses;
+    if (addr.id) { var i = a.findIndex(function (x) { return x.id === addr.id; }); if (i >= 0) a[i] = addr; else a.push(addr); }
+    else { addr.id = "ad" + Date.now(); a.push(addr); }
+    if (!state.profile.defaultAddressId) state.profile.defaultAddressId = addr.id;
+    touchWallet(); save(); return addr.id;
+  }
+  function deleteAddress(id) {
+    state.profile.addresses = state.profile.addresses.filter(function (x) { return x.id !== id; });
+    if (state.profile.defaultAddressId === id) state.profile.defaultAddressId = (state.profile.addresses[0] || {}).id || null;
+    touchWallet(); save();
+  }
+  function setDefaultAddress(id) { state.profile.defaultAddressId = id; touchWallet(); save(); }
+
+  /* —— Pagamento —— */
+  function getPayment() { return state.profile.payment; }
+  function setPayment(method, cardId) { state.profile.payment = { method: method, cardId: cardId || state.profile.payment.cardId }; touchWallet(); save(); }
   function getOrder(id) { return state.orders.find(function (o) { return o.id === id; }); }
   function activeOrder() { return state.orders.find(function (o) { return !o.delivered; }) || null; }
   function setOrderIndex(id, idx) {
@@ -183,7 +211,9 @@ window.DC = window.DC || {};
   DC.store = {
     get state() { return state; }, save: save, productById: productById,
     addToCart: addToCart, setQty: setQty, clearCart: clearCart, cartCount: cartCount, cartTotal: cartTotal,
-    createOrder: createOrder, getOrder: getOrder, activeOrder: activeOrder, setOrderIndex: setOrderIndex,
+    createOrder: createOrder, buyNow: buyNow, getOrder: getOrder, activeOrder: activeOrder, setOrderIndex: setOrderIndex,
+    addresses: addresses, defaultAddress: defaultAddress, saveAddress: saveAddress, deleteAddress: deleteAddress, setDefaultAddress: setDefaultAddress,
+    getPayment: getPayment, setPayment: setPayment,
     xpProgress: xpProgress, addXp: addXp, levelFromXp: levelFromXp,
     touchStreak: touchStreak, addBadge: addBadge, hasBadge: hasBadge,
     addSavings: addSavings, canOpenMystery: canOpenMystery, markMystery: markMystery,

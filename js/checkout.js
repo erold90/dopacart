@@ -1,79 +1,76 @@
-/* DopaCart — Checkout simulato. 3 step (Zeigarnik + goal-gradient), pagamento finto, meso-reward alla conferma. */
+/* DopaCart — Checkout a pagina unica (stile Amazon): indirizzo + pagamento pre-compilati, un tap "Ordina ora". Pagamento finto. */
 window.DC = window.DC || {};
-DC.views = DC.views || {};
 (function () {
-  var step = 1;
-  var ship = {};
-
-  function stepsBar() {
-    return '<div class="steps">' + [1, 2, 3].map(function (i) {
-      var cls = i < step ? "done" : (i === step ? "active" : "");
-      return '<div class="step ' + cls + '"></div>';
-    }).join("") + '</div>';
-  }
+  function esc(s) { return (s || "").toString().replace(/</g, "&lt;"); }
 
   DC.views.checkout = function (root) {
-    if (!DC.store.state.cart.length) { DC.go("#/cart"); return; }
-    step = 1; ship = {}; paint(root);
+    var s = DC.store;
+    if (!s.state.cart.length) {
+      root.innerHTML = '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' Carrello</button>' +
+        DC.emptyBox("cart", "Carrello vuoto", { sub: "Aggiungi qualcosa prima di pagare (per finta).", btn: "Vai al catalogo", btnHash: "#/catalog", btnIcon: "grid" });
+      var b = root.querySelector("#back"); if (b) b.addEventListener("click", function () { DC.go("#/cart"); });
+      return;
+    }
+    paint(root);
   };
 
   function paint(root) {
-    var s = DC.store, inner;
-    var sub = s.cartTotal(), cpct = (DC.coupon && DC.coupon.pct) || 0, disc = sub * cpct, total = sub - disc;
+    var s = DC.store;
+    var sub = s.cartTotal();
+    var disc = sub * ((DC.coupon && DC.coupon.pct) || 0);
+    var total = sub - disc;
+    var addr = s.defaultAddress();
+    var pay = DC.wallet.paymentSummary();
 
-    if (step === 1) {
-      inner =
-        '<div class="section-title" style="margin-top:0">' + DC.icon("mapPin") + 'Dove lo spediamo (per finta)</div>' +
-        '<div class="field"><label>Nome</label><input id="f-name" value="' + ((DC.store.state.profile.name || "Tu").replace(/"/g, "")) + '" autocomplete="off"></div>' +
-        '<div class="field"><label>Indirizzo</label><input id="f-addr" value="Via della Dopamina, 1" autocomplete="off"></div>' +
-        '<div class="field"><label>Città</label><input id="f-city" value="Lecce" autocomplete="off"></div>' +
-        '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="next">Continua</button></div>';
-    } else if (step === 2) {
-      inner =
-        '<div class="section-title" style="margin-top:0">' + DC.icon("wallet") + 'Pagamento (finto, tranquillo)</div>' +
-        '<div class="fakecard"><div style="opacity:.85;font-size:var(--fs-sm);font-weight:700">DopaCard · nessun addebito</div>' +
-          '<div class="chiprect"></div>' +
-          '<div class="num">5470 0000 0000 0000</div>' +
-          '<div class="meta"><span>SEMPRE TU</span><span>∞ / ∞</span></div></div>' +
-        '<div class="cart-summary"><div class="cart-row"><span class="sub">Totale</span>' +
-          '<span class="cart-total tnum">' + DC.fx.euro(total) + '</span></div>' +
-          '<div class="disclaimer">0,00 € verranno addebitati. Davvero.</div></div>' +
-        '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="next">Continua</button></div>';
-    } else {
-      inner =
-        '<div class="section-title" style="margin-top:0">' + DC.icon("clipboard") + 'Conferma</div>' +
-        s.state.cart.map(function (l) {
-          var p = s.productById(l.productId);
-          return '<div class="cart-row"><span>' + p.title + ' ×' + l.qty + '</span><span class="tnum">' + DC.fx.euro(p.price * l.qty) + '</span></div>';
-        }).join("") +
-        '<div class="cart-summary"><div class="cart-row"><span class="cart-total">Totale</span><span class="cart-total tnum">' + DC.fx.euro(total) + '</span></div></div>' +
-        '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="order">' + DC.icon("zap") + ' Ordina ora</button></div>';
-    }
+    var addrInner = addr
+      ? '<div class="co-main"><b>' + esc(addr.label || "Consegna") + " · " + esc(addr.name) + "</b>" +
+          '<div class="sub">' + esc(DC.wallet.addrLine(addr)) + "</div></div>"
+      : '<div class="co-main"><b>Aggiungi un indirizzo</b><div class="sub">Dove lo spediamo (per finta)</div></div>';
 
     root.innerHTML =
-      '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' ' + (step === 1 ? 'Carrello' : 'Indietro') + '</button>' +
-      '<div class="h1">Checkout</div>' + stepsBar() + inner;
+      '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + " Carrello</button>" +
+      '<div class="h1">Checkout</div>' +
 
-    root.querySelector("#back").addEventListener("click", function () { if (step === 1) DC.go("#/cart"); else { step--; paint(root); } });
-    var next = root.querySelector("#next");
-    if (next) next.addEventListener("click", function () {
-      if (step === 1) {
-        ship = {
-          name: (root.querySelector("#f-name").value || "").trim() || "Tu",
-          addr: (root.querySelector("#f-addr").value || "").trim(),
-          city: (root.querySelector("#f-city").value || "").trim()
-        };
-      }
-      DC.fx.sound.tap(); DC.fx.buzz.light(); step++; paint(root);
+      '<div class="co-card" id="coAddr"><div class="co-ic">' + DC.icon("mapPin") + "</div>" +
+        addrInner + '<span class="link-btn">' + (addr ? "Modifica" : "Aggiungi") + "</span></div>" +
+
+      '<div class="co-card" id="coPay"><div class="co-ic">' + DC.icon(pay.icon) + "</div>" +
+        '<div class="co-main"><b>' + esc(pay.title) + '</b><div class="sub">' + esc(pay.sub) + "</div></div>" +
+        '<span class="link-btn">Cambia</span></div>' +
+
+      '<div class="section-title">' + DC.icon("clipboard") + "Riepilogo</div>" +
+      '<div class="cart-summary">' +
+        s.state.cart.map(function (l) {
+          var p = s.productById(l.productId);
+          return '<div class="cart-row"><span>' + esc(p.title) + " ×" + l.qty + '</span><span class="tnum">' + DC.fx.euro(p.price * l.qty) + "</span></div>";
+        }).join("") +
+        (disc > 0 ? '<div class="cart-row"><span class="sub">Sconto ' + (DC.coupon.code || "") + '</span><span class="tnum" style="color:var(--action)">-' + DC.fx.euro(disc) + "</span></div>" : "") +
+        '<div class="cart-row"><span class="cart-total">Totale</span><span class="cart-total tnum">' + DC.fx.euro(total) + "</span></div>" +
+        '<div class="disclaimer">0,00 € verranno addebitati. Davvero.</div>' +
+      "</div>" +
+
+      '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="order">' + DC.icon("zap") + " Ordina ora · " + DC.fx.euro(total) + "</button></div>";
+
+    root.querySelector("#back").addEventListener("click", function () { DC.go("#/cart"); });
+    root.querySelector("#coAddr").addEventListener("click", function () {
+      if (s.addresses().length) DC.wallet.pickAddress(function () { paint(root); });
+      else DC.wallet.editAddress(null, function () { paint(root); });
     });
-    var order = root.querySelector("#order");
-    if (order) order.addEventListener("click", placeOrder);
+    root.querySelector("#coPay").addEventListener("click", function () { DC.wallet.pickPayment(function () { paint(root); }); });
+    root.querySelector("#order").addEventListener("click", function () { placeOrder(root); });
   }
 
-  function placeOrder() {
-    var sub = DC.store.cartTotal();
+  function placeOrder(root) {
+    var s = DC.store;
+    var addr = s.defaultAddress();
+    if (!addr) {
+      DC.fx.toast("Aggiungi un indirizzo di consegna", { icon: "mapPin" });
+      DC.wallet.editAddress(null, function () { paint(root); });
+      return;
+    }
+    var sub = s.cartTotal();
     var disc = sub * ((DC.coupon && DC.coupon.pct) || 0);
-    var o = DC.store.createOrder(ship, { discountAmt: disc });
+    var o = s.createOrder(DC.wallet.shipFrom(addr), { discountAmt: disc, payment: DC.wallet.payInfo() });
     DC.coupon = { code: null, pct: 0 };
     DC.fx.confetti({ count: 120, y: innerHeight * 0.5 });
     DC.fx.sound.success(); DC.fx.buzz.strong();

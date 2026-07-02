@@ -95,6 +95,10 @@ DC.views = DC.views || {};
 
       '<div class="section-title">' + DC.icon("user") + 'Account</div>' +
       '<div class="settings-card" id="acctCard"></div>' +
+      '<div class="section-title" id="shipTitle">' + DC.icon("mapPin") + 'Indirizzo di consegna</div>' +
+      '<div class="settings-card" id="addrCard"></div>' +
+      '<div class="section-title" id="payTitle">' + DC.icon("wallet") + 'Portafoglio</div>' +
+      '<div id="payCard"></div>' +
       '<div class="section-title">' + DC.icon("settings") + 'Impostazioni</div>' +
       '<div class="settings-card">' +
         toggleRow("sound", "Suoni", s.state.settings.sound) +
@@ -126,6 +130,34 @@ DC.views = DC.views || {};
       } else {
         acct.innerHTML = '<div class="disclaimer" style="padding:var(--sp-3) 0">Accesso via email in arrivo.</div>';
       }
+    }
+
+    // —— Indirizzo di consegna + Portafoglio (visibili da loggati) ——
+    var loggedIn = DC.auth && DC.auth.isLoggedIn && DC.auth.isLoggedIn();
+    ["shipTitle", "addrCard", "payTitle", "payCard"].forEach(function (id) {
+      var el = root.querySelector("#" + id); if (el) el.style.display = loggedIn ? "" : "none";
+    });
+    if (loggedIn && DC.wallet) {
+      var addrCard = root.querySelector("#addrCard");
+      (function renderAddr() {
+        var a = s.defaultAddress();
+        addrCard.innerHTML = a
+          ? '<div class="cart-row" style="padding:var(--sp-2) 0"><span><b>' + (a.label || "Consegna") + " · " + a.name + '</b><br><span class="sub" style="font-size:var(--fs-xs)">' + DC.wallet.addrLine(a) + '</span></span><button class="chip" id="mgAddr">Gestisci</button></div>'
+          : '<div style="padding:var(--sp-2) 0"><button class="btn btn-ghost btn-block" id="mgAddr">' + DC.icon("plus") + ' Aggiungi indirizzo</button></div>';
+        var mg = addrCard.querySelector("#mgAddr");
+        mg.addEventListener("click", function () {
+          if (s.addresses().length) DC.wallet.pickAddress(renderAddr); else DC.wallet.editAddress(null, renderAddr);
+        });
+      })();
+      var payCard = root.querySelector("#payCard");
+      (function renderPay() {
+        var ps = DC.wallet.paymentSummary();
+        payCard.innerHTML = (ps.card ? DC.wallet.cardArt(ps.card, { sm: true }) : "") +
+          '<div class="settings-card" style="margin-top:var(--sp-2)"><div class="cart-row" style="padding:var(--sp-2) 0">' +
+          '<span>' + DC.icon(ps.icon) + " <b>" + ps.title + "</b></span>" +
+          '<button class="chip" id="mgPay">Cambia</button></div></div>';
+        payCard.querySelector("#mgPay").addEventListener("click", function () { DC.wallet.pickPayment(renderPay); });
+      })();
     }
 
     root.querySelectorAll(".js-count").forEach(function (el) {

@@ -58,6 +58,14 @@ window.DC = window.DC || {};
     return Object.keys(byId).map(function (k) { return byId[k]; });
   }
   function maxDay(a, b) { if (!a) return b || null; if (!b) return a; return a > b ? a : b; }
+  function mergeAddresses(a, b, srvNewer) {
+    var byId = {}, order = [];
+    // primo il lato "vincente" così sui duplicati per id prevale il più recente
+    (srvNewer ? (b || []).concat(a || []) : (a || []).concat(b || [])).forEach(function (x) {
+      if (x && x.id && !byId[x.id]) { byId[x.id] = x; order.push(x); }
+    });
+    return order.slice(0, 30);
+  }
 
   function merge(local, server) {
     if (!server) return local;
@@ -69,6 +77,14 @@ window.DC = window.DC || {};
     out.profile.streak = pickStreak(lp.streak, sp.streak);
     out.profile.savings = mergeSavings(lp.savings, sp.savings);
     out.profile.name = lp.name || sp.name || out.profile.name;
+    // wallet: unione indirizzi (mai persi); predefinito/pagamento dal lato modificato più di recente
+    var lw = lp.walletUpdatedAt || 0, sw = sp.walletUpdatedAt || 0, srvNewer = sw > lw;
+    out.profile.addresses = mergeAddresses(lp.addresses, sp.addresses, srvNewer);
+    out.profile.walletUpdatedAt = Math.max(lw, sw);
+    out.profile.defaultAddressId = srvNewer ? (sp.defaultAddressId || lp.defaultAddressId) : (lp.defaultAddressId || sp.defaultAddressId);
+    out.profile.payment = srvNewer ? (sp.payment || lp.payment) : (lp.payment || sp.payment);
+    var ids = out.profile.addresses.map(function (a) { return a.id; });
+    if (out.profile.defaultAddressId && ids.indexOf(out.profile.defaultAddressId) < 0) out.profile.defaultAddressId = ids[0] || null;
     out.wishlist = unionIds(local.wishlist, server.wishlist).slice(0, 200);
     out.recent = unionIds(local.recent, server.recent).slice(0, 12);
     out.orders = mergeOrders(local.orders, server.orders);

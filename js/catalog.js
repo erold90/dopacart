@@ -301,10 +301,15 @@ DC.views = DC.views || {};
       '<div class="section-title">' + DC.icon("star") + 'Recensioni</div>' +
       '<div class="reviews">' + (function () { var rv = coherentRevs(p); return rv.length ? rv.map(reviewCard).join("") : '<p class="sub">Ancora nessuna recensione.</p>'; })() + '</div>' +
 
-      '<div class="sticky-cta"><button class="btn btn-action btn-block btn-lg" id="addBtn">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button></div>';
+      '<div class="sticky-cta"><div class="cta-row">' +
+        '<button class="btn btn-tap btn-lg" id="oneTap">' + DC.icon("zap") + ' 1-Tap</button>' +
+        '<button class="btn btn-action btn-lg" id="addBtn">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button>' +
+      '</div></div>';
 
     root.querySelector("#back").addEventListener("click", function () { history.back(); });
     root.querySelector("#addBtn").addEventListener("click", function (e) { DC.addToCartFx(p.id, e.currentTarget); DC.fx.toast("Aggiunto al carrello", { icon: "check" }); });
+    var ot = root.querySelector("#oneTap");
+    if (ot) ot.addEventListener("click", function () { DC.fx.sound.tap(); if (DC.oneTapBuy) DC.oneTapBuy(p.id); });
     root.querySelector("#fbtAdd").addEventListener("click", function (e) {
       e.currentTarget.dataset.fbt.split(",").forEach(function (id) { DC.store.addToCart(id); });
       DC.fx.sound.add(); DC.fx.buzz.medium(); DC.fx.flyToCart(e.currentTarget); DC.refreshNav(true);
