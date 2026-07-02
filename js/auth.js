@@ -1,7 +1,7 @@
 /* DopaCart — login passwordless via codice email (parla col Worker Cloudflare).
    IMPOSTA DC.AUTH_URL con l'URL del Worker per attivare. Vuoto = funzione dormiente. */
 window.DC = window.DC || {};
-DC.AUTH_URL = ""; // es. "https://dopacart-auth.xxxx.workers.dev"
+DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless + sync (dominio Resend verificato)
 (function () {
   var KEY = "dopacart.session";
   function sess() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
