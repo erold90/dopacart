@@ -419,6 +419,23 @@ a{color:inherit;text-decoration:none}
 .share-preview{width:100%;border-radius:var(--r-lg);box-shadow:var(--shadow-pop);display:block;animation:cardPop var(--dur-meso) var(--ease-pop)}
 .share-close{color:oklch(1 0 0/.85);font-weight:700;background:none;min-height:44px}
 
+/* ————— Donazioni (tip-jar, bottom sheet) ————— */
+.donate-ov{position:fixed;inset:0;z-index:84;display:flex;align-items:flex-end;justify-content:center;background:oklch(0.14 0.03 290/.6);backdrop-filter:blur(8px);transition:opacity .25s;animation:ovIn .25s var(--ease-out)}
+.donate-card{position:relative;width:100%;max-width:var(--app-max);background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:var(--sp-8) var(--sp-5) calc(var(--sp-8) + env(safe-area-inset-bottom,0));box-shadow:var(--shadow-lift);animation:sheetUp var(--dur-meso) var(--ease-out);text-align:center}
+.donate-ico{width:66px;height:66px;margin:0 auto var(--sp-3);border-radius:var(--r-lg);display:grid;place-items:center;background:var(--grad-warm);color:var(--on-action);box-shadow:var(--shadow-pop)}
+.donate-ico .ic{width:34px;height:34px}
+.donate-tiers{display:flex;gap:var(--sp-2);margin:var(--sp-5) 0 var(--sp-3)}
+.donate-tier{flex:1;min-height:58px;border-radius:var(--r-md);background:var(--surface-2);font-family:var(--font-display);font-weight:800;font-size:var(--fs-lg);transition:transform var(--dur-micro) var(--ease-pop),background var(--dur-micro)}
+.donate-tier:active{transform:scale(.95)}
+@media(hover:hover){.donate-tier:hover{background:var(--action-soft);color:var(--action)}}
+.donate-custom{display:flex;align-items:center;gap:8px}
+.donate-custom .dc-eur{font-weight:800;color:var(--text-soft);font-size:var(--fs-lg)}
+.donate-custom input{flex:1;min-width:0;min-height:50px;padding:0 var(--sp-3);border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--surface);font:inherit;color:var(--text);outline:none}
+.donate-custom input:focus{border-color:var(--joy-blue)}
+.donate-custom .btn{min-height:50px;flex:0 0 auto}
+.donate-foot{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:var(--sp-4);font-size:var(--fs-xs);color:var(--text-faint)}
+.donate-foot .ic{width:14px;height:14px;color:var(--action)}
+
 /* ————— Auth (login passwordless, bottom sheet) ————— */
 .auth-ov{position:fixed;inset:0;z-index:58;display:flex;align-items:flex-end;justify-content:center;background:oklch(0.14 0.03 290/.55);backdrop-filter:blur(8px);transition:opacity .25s;animation:ovIn .25s var(--ease-out)}
 .auth-card{position:relative;width:100%;max-width:var(--app-max);background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;

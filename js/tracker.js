@@ -44,9 +44,6 @@ DC.views = DC.views || {};
   };
 
   function render(root, o) {
-    var first = DC.store.productById(o.items[0].productId);
-    var aff = DC.affiliateUrl(first);
-
     root.innerHTML =
       '<button class="backbtn" id="back">' + DC.icon("chevronLeft") + ' Ordini</button>' +
       '<div class="h1">Il tuo pacco</div>' +
@@ -71,13 +68,13 @@ DC.views = DC.views || {};
       '</div>' +
 
       '<div class="affiliate">' +
-        '<div class="head">' + DC.icon("sparkles") + 'Ti è scattata la voglia per davvero?</div>' +
-        '<a class="btn btn-action btn-block" href="' + aff + '" target="_blank" rel="sponsored nofollow noopener" id="affBtn">' + DC.icon("cart") + ' Compralo su Amazon</a>' +
-        '<div class="disc-label">In qualità di Affiliato Amazon, DopaCart riceve un guadagno dagli acquisti idonei · link affiliato</div>' +
+        '<div class="head">' + DC.icon("coffee") + 'Ti ha dato un secondo di gioia?</div>' +
+        '<p>DopaCart è gratis e senza pubblicità. Se ti va, offrici un caffè.</p>' +
+        '<button class="btn btn-action btn-block" id="supBtn">' + DC.icon("heart") + ' Sostieni DopaCart</button>' +
       '</div>';
 
     root.querySelector("#back").addEventListener("click", function () { clearTimers(); DC.go("#/orders"); });
-    root.querySelector("#affBtn").addEventListener("click", function () { DC.fx.sound.tap(); });
+    root.querySelector("#supBtn").addEventListener("click", function () { DC.fx.sound.tap(); if (DC.donate) DC.donate.open(); });
     updateView(root, o);
   }
 
