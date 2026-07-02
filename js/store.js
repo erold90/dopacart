@@ -47,7 +47,7 @@ window.DC = window.DC || {};
       return s;
     } catch (e) { return JSON.parse(JSON.stringify(defaults)); }
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} if (window.DC && DC.sync) DC.sync.markDirty(); }
 
   function productById(id) { return DC.catalog.products.find(function (p) { return p.id === id; }); }
 

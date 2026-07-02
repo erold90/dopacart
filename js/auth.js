@@ -70,7 +70,8 @@ DC.AUTH_URL = ""; // es. "https://dopacart-auth.xxxx.workers.dev"
           DC.store.state.profile.name = d.name; DC.store.save();
           DC.fx.confetti({ count: 90 }); DC.fx.sound.success(); DC.fx.buzz.win();
           DC.fx.toast("Bentornato, " + d.name + "!", { win: true, icon: "check" });
-          close(); DC.refresh();
+          close();
+          if (DC.sync) DC.sync.onLogin().then(function () { DC.refresh(); }); else DC.refresh();
         })
         .catch(function (e) { DC.fx.toast(e.message, { icon: "x", ms: 2600 }); btn.disabled = false; btn.textContent = "Entra"; });
     }

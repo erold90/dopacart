@@ -105,6 +105,7 @@ window.DC = window.DC || {};
       if (!location.hash) location.hash = "#/home";
       window.addEventListener("hashchange", render);
       onboarding(render);
+      if (DC.sync) DC.sync.start(); // sincronizza lo stato cross-device se loggato
     }).catch(function () {
       view.innerHTML = '<div class="empty"><div class="em">' + DC.icon("x") + '</div><div class="et">Catalogo non disponibile</div><p>Controlla la connessione e ricarica.</p></div>';
     });
