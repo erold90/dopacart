@@ -24,16 +24,21 @@ window.DC = window.DC || {};
     if (lvl.leveledUp) { DC.fx.sound.levelup(); DC.fx.toast("Livello " + lvl.level + "!", { win: true, icon: "trophy" }); }
   };
 
-  function buildChrome() {
-    document.getElementById("topbar").innerHTML =
-      '<div class="brand"><span class="logo">' + DC.icon("cart") + '</span>DopaCart</div><div class="spacer"></div>' +
-      '<button class="topwish" id="topWish" aria-label="Preferiti">' + DC.icon("heart") + '<span class="tnum" id="wishN">0</span></button>' +
-      '<div class="streak-pill">' + DC.icon("flame") + '<span class="tnum" id="streakN">0</span></div>';
-    document.getElementById("bottomnav").innerHTML = NAV.map(function (n) {
+  function navBtnsHTML() {
+    return NAV.map(function (n) {
       return '<button class="navbtn" data-route="' + n.route + '" data-hash="' + n.hash + '">' +
-        '<span class="pill">' + DC.icon(n.icon) + (n.route === "cart" ? '<span class="badge" id="cartBadge" hidden>0</span>' : '') + '</span>' +
+        '<span class="pill">' + DC.icon(n.icon) + (n.route === "cart" ? '<span class="badge cart-badge" hidden>0</span>' : '') + '</span>' +
         '<span>' + n.label + '</span></button>';
     }).join("");
+  }
+  function buildChrome() {
+    document.getElementById("topbar").innerHTML =
+      '<div class="brand"><span class="logo">' + DC.icon("cart") + '</span>DopaCart</div>' +
+      '<nav class="topnav">' + navBtnsHTML() + '</nav>' +
+      '<div class="spacer"></div>' +
+      '<button class="topwish" id="topWish" aria-label="Preferiti">' + DC.icon("heart") + '<span class="tnum" id="wishN">0</span></button>' +
+      '<div class="streak-pill">' + DC.icon("flame") + '<span class="tnum" id="streakN">0</span></div>';
+    document.getElementById("bottomnav").innerHTML = navBtnsHTML();
     document.querySelectorAll(".navbtn").forEach(function (b) {
       b.addEventListener("click", function () { DC.fx.sound.tap(); DC.go(b.dataset.hash); });
     });
@@ -42,8 +47,11 @@ window.DC = window.DC || {};
   }
 
   DC.refreshNav = function (pop) {
-    var n = DC.store.cartCount(), badge = document.getElementById("cartBadge");
-    if (badge) { badge.textContent = n; badge.hidden = n === 0; if (pop) { badge.classList.remove("pop"); void badge.offsetWidth; badge.classList.add("pop"); } }
+    var n = DC.store.cartCount();
+    document.querySelectorAll(".cart-badge").forEach(function (badge) {
+      badge.textContent = n; badge.hidden = n === 0;
+      if (pop) { badge.classList.remove("pop"); void badge.offsetWidth; badge.classList.add("pop"); }
+    });
     var sn = document.getElementById("streakN"); if (sn) sn.textContent = DC.store.state.profile.streak.count;
     var wn = document.getElementById("wishN"); if (wn) wn.textContent = DC.store.wishlistCount();
   };
@@ -59,6 +67,7 @@ window.DC = window.DC || {};
     if (DC.cleanupTrack) DC.cleanupTrack();
     if (DC.clearViewTimers) DC.clearViewTimers();
     var r = parse(), view = document.getElementById("view");
+    view.className = "view view-" + r.base;
     window.scrollTo(0, 0);
     var map = {
       home: function () { DC.views.home(view); return "home"; },
