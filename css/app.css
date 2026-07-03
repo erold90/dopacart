@@ -506,7 +506,7 @@ a{color:inherit;text-decoration:none}
 
 /* ————— DESKTOP (≥ 960px): layout wide, nav in alto, griglia multi-colonna ————— */
 @media (min-width: 960px){
-  #app{max-width:1200px}
+  #app{max-width:1440px}
   .topbar{padding:var(--sp-4) var(--sp-6);gap:var(--sp-4);background:var(--bg);border-bottom:1px solid var(--border);backdrop-filter:none}
   .brand{font-size:1.55rem}
   .topnav{display:flex;gap:2px;margin-left:var(--sp-3)}
@@ -519,7 +519,7 @@ a{color:inherit;text-decoration:none}
   .bottomnav{display:none}
   .view{padding:var(--sp-6) var(--sp-6) var(--sp-12)}
   /* Larghezze per tipo di pagina: griglie a tutta larghezza, contenuti-lettura più stretti */
-  .view-product,.view-checkout,.view-cart,.view-orders,.view-profile,.view-track{max-width:840px;margin-inline:auto}
+  .view-product,.view-checkout,.view-cart,.view-orders,.view-profile,.view-track{max-width:900px;margin-inline:auto}
   .view-product .pd-hero{max-width:520px;margin-inline:auto;aspect-ratio:1}
   /* Griglia prodotti multi-colonna */
   .grid{grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:var(--sp-4)}

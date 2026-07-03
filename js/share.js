@@ -60,7 +60,7 @@ window.DC = window.DC || {};
     ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.fillText(chip, W - 80 - cw / 2, 126);
 
     // hero
-    var im = await loadImg(opts.img);
+    var im = await loadImg(opts.img && DC.imgSrc ? DC.imgSrc(opts.img, 800) : opts.img);
     var heroY = 220, heroH = 540;
     ctx.fillStyle = "rgba(255,255,255,.14)"; rr(ctx, 80, heroY, W - 160, heroH, 48); ctx.fill();
     if (im) {
