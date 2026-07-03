@@ -76,7 +76,7 @@ DC.views = DC.views || {};
     return revs.slice(0, 4);
   }
 
-  /* —— HOME: vetrina auto-ciclante (Più venduti → In promozione → Novità) —— */
+  /* —— HOME: sezioni FISSE del giorno (Più venduti · Offerte lampo · Novità), cambiano ogni 24h —— */
   var SC_MODES = [
     { badge: "best-seller", title: "Più venduti", icon: "trophy" },
     { badge: "offerta", title: "Offerte lampo", icon: "bolt", lightning: true },
@@ -93,21 +93,13 @@ DC.views = DC.views || {};
   }
 
   function notFood(p) { return p.cat !== "food"; } // gli alimenti non vanno in vetrina/in cima (fanno ridere come hero)
-  function renderShowcase(root, idx) {
-    var m = SC_MODES[idx % SC_MODES.length];
-    var pool = (m.badge ? DC.catalog.products.filter(function (p) { return p.badges.indexOf(m.badge) >= 0; }) : DC.catalog.products).filter(notFood);
-    if (pool.length < 4) pool = DC.catalog.products.filter(notFood);
-    // Offerte lampo = set FISSO del giorno (refresh ogni 24h); le altre sezioni ruotano varie
-    var items = m.lightning ? dailyPick(pool, 8, daySeed()) : sample(pool, 8);
-    var title = root.querySelector("#scTitle"), grid = root.querySelector("#scGrid"), dots = root.querySelector("#scDots");
-    if (!title || !grid) return;
-    function swap() {
-      title.innerHTML = DC.icon(m.icon) + m.title + (m.lightning ? '<span class="lz-time" id="lzTime">--:--:--</span>' : "");
-      grid.innerHTML = items.map(function (p) { return productCard(p, { lightning: !!m.lightning }); }).join("");
-      bindCards(grid); grid.classList.remove("out");
-      if (dots) dots.innerHTML = SC_MODES.map(function (_, i) { return '<span class="' + (i === idx % SC_MODES.length ? "on" : "") + '"></span>'; }).join("");
-    }
-    if (DC.fx.reduced) swap(); else { grid.classList.add("out"); setTimeout(swap, 320); }
+  // Ogni sezione della home = set FISSO del giorno (seed giornaliero): cambia una volta ogni 24h, niente auto-refresh a schermo
+  function sectionHTML(m, seedIdx) {
+    var pool = DC.catalog.products.filter(function (p) { return p.badges.indexOf(m.badge) >= 0; }).filter(notFood);
+    if (pool.length < 6) pool = DC.catalog.products.filter(notFood);
+    var items = dailyPick(pool, 6, daySeed() * 7 + seedIdx);
+    return '<div class="section-title">' + DC.icon(m.icon) + m.title + (m.lightning ? '<span class="lz-time" id="lzTime">--:--:--</span>' : "") + "</div>" +
+      '<div class="grid">' + items.map(function (p) { return productCard(p, { lightning: !!m.lightning }); }).join("") + "</div>";
   }
 
   DC.views.home = function (root) {
@@ -126,9 +118,7 @@ DC.views = DC.views || {};
       (canMystery ?
         '<div class="mystery" id="homeMystery"><div class="box">' + DC.icon("gift") + '</div>' +
           '<div class="mt">Scatola mistero del giorno</div><div class="ms">Toccala per un bonus a sorpresa</div></div>' : '') +
-      '<div class="section-title sc-title" id="scTitle"></div>' +
-      '<div class="grid sc-grid" id="scGrid"></div>' +
-      '<div class="sc-dots" id="scDots"></div>' +
+      SC_MODES.map(function (m, i) { return sectionHTML(m, i); }).join("") +
       (recent.length ?
         '<div class="section-title">' + DC.icon("eye") + 'Visti di recente</div>' +
         '<div class="hscroll">' + recent.map(function (p) { return productCard(p); }).join("") + '</div>' : "");
@@ -136,11 +126,7 @@ DC.views = DC.views || {};
     root.querySelector("#heroCta").addEventListener("click", function () { DC.fx.sound.tap(); DC.go("#/catalog"); });
     var mb = root.querySelector("#homeMystery");
     if (mb) mb.addEventListener("click", function () { DC.openMystery(mb); });
-    bindCards(root); // riga "visti di recente"
-
-    var idx = 0;
-    renderShowcase(root, 0);
-    DC.regTimer(setInterval(function () { idx++; renderShowcase(root, idx); }, 6000));
+    bindCards(root); // lega tutte le card (sezioni del giorno + visti di recente)
     startLightning();
   };
 
