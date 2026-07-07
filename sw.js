@@ -2,7 +2,7 @@
    SHELL (html/css/js) = NETWORK-FIRST → l'app è sempre aggiornata online (niente audit/utenti su versioni vecchie); la cache è solo fallback offline.
    catalog.json = stale-while-revalidate (istantaneo da cache + aggiorna in background).
    Immagini esterne = cache-first (persistono tra le versioni). */
-var CACHE = "dopacart-v35";
+var CACHE = "dopacart-v36";
 var IMG = "dopacart-img";
 var ASSETS = [
   "./", "index.html", "manifest.webmanifest",

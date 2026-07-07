@@ -10,6 +10,21 @@ DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless
   function isLoggedIn() { var s = sess(); return !!(s && s.token); }
   function logout() { localStorage.removeItem(KEY); }
 
+  // "Ricorda su questo dispositivo": email già verificate → rientro senza codice (finché il token 30gg è vivo)
+  var KKEY = "dopacart.known";
+  function known() { try { return JSON.parse(localStorage.getItem(KKEY)) || {}; } catch (e) { return {}; } }
+  function saveKnown(d) {
+    if (!d || !d.email || !d.token) return;
+    var k = known(); k[d.email.toLowerCase()] = { token: d.token, name: d.name, email: d.email };
+    try { localStorage.setItem(KKEY, JSON.stringify(k)); } catch (e) {}
+  }
+  function knownFor(email) { return known()[(email || "").toLowerCase()] || null; }
+  async function me(token) {
+    var res = await fetch(DC.AUTH_URL.replace(/\/$/, "") + "/me", { headers: { "Authorization": "Bearer " + token } });
+    if (!res.ok) throw new Error("no_session");
+    return res.json();
+  }
+
   async function api(path, payload) {
     var res = await fetch(DC.AUTH_URL.replace(/\/$/, "") + path, {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
@@ -55,7 +70,24 @@ DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless
       state.name = (ov.querySelector("#a-name").value || "").trim();
       state.email = (ov.querySelector("#a-email").value || "").trim();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(state.email)) { DC.fx.toast("Email non valida", { icon: "x" }); return; }
-      var btn = ov.querySelector("#send"); btn.disabled = true; btn.textContent = "Invio…";
+      var btn = ov.querySelector("#send"); btn.disabled = true; btn.textContent = "Attendo…";
+      var kn = knownFor(state.email);
+      if (kn && kn.token) {
+        // email nota su questo dispositivo → prova rientro istantaneo senza codice
+        me(kn.token).then(function (info) {
+          save({ token: kn.token, email: info.email || kn.email, name: info.name || kn.name });
+          DC.store.state.profile.name = info.name || kn.name; DC.store.save();
+          DC.fx.sound.success(); DC.fx.buzz.win();
+          DC.fx.toast("Bentornato, " + (info.name || kn.name) + "! Niente codice stavolta.", { win: true, icon: "check" });
+          close();
+          if (DC.sync) DC.sync.onLogin().then(function () { DC.refresh(); }); else DC.refresh();
+        }).catch(function () { doSendCode(btn); }); // token scaduto → codice
+      } else {
+        doSendCode(btn);
+      }
+    }
+    function doSendCode(btn) {
+      btn.textContent = "Invio…";
       api("/auth/request", { email: state.email, name: state.name || "Cliente" })
         .then(function () { DC.fx.sound.tap(); state.step = 2; render(); })
         .catch(function (e) { DC.fx.toast(e.message, { icon: "x", ms: 2600 }); btn.disabled = false; btn.textContent = "Invia codice"; });
@@ -66,7 +98,7 @@ DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless
       var btn = ov.querySelector("#verify"); btn.disabled = true; btn.textContent = "Verifico…";
       api("/auth/verify", { email: state.email, code: code })
         .then(function (d) {
-          save({ token: d.token, email: d.email, name: d.name });
+          save({ token: d.token, email: d.email, name: d.name }); saveKnown(d);
           DC.store.state.profile.name = d.name; DC.store.save();
           DC.fx.confetti({ count: 90 }); DC.fx.sound.success(); DC.fx.buzz.win();
           DC.fx.toast("Bentornato, " + d.name + "!", { win: true, icon: "check" });
@@ -84,7 +116,7 @@ DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless
   function request(email, name) { return api("/auth/request", { email: email, name: name || "Cliente" }); }
   function verify(email, code) {
     return api("/auth/verify", { email: email, code: code }).then(function (d) {
-      save({ token: d.token, email: d.email, name: d.name });
+      save({ token: d.token, email: d.email, name: d.name }); saveKnown(d);
       DC.store.state.profile.name = d.name; DC.store.save();
       return d;
     });
