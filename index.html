@@ -5,13 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>DopaCart · lo shopping che ti dà la scarica, non il conto</title>
   <meta name="description" content="Il dopamine site italiano: vivi tutto il rituale dello shopping (carrello, ordine, pacco in arrivo) per la scarica di dopamina, senza spendere un euro.">
+  <link rel="canonical" href="https://dopacart.it/">
+  <meta name="keywords" content="dopamine site, finto shopping, shopping finto, dopamina shopping, carrello finto, spesa a costo zero, PWA shopping, DopaCart, shopping simulato, dopamina">
+  <meta name="author" content="DopaCart">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#faf6f2">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="DopaCart">
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon-180.png">
+
+  <!-- Open Graph (anteprime social / AI) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DopaCart">
+  <meta property="og:title" content="DopaCart · lo shopping che ti dà la scarica, non il conto">
+  <meta property="og:description" content="Il dopamine site italiano: vivi tutto il rituale dello shopping (carrello, ordine, pacco in arrivo) per la scarica di dopamina, senza spendere un euro.">
+  <meta property="og:url" content="https://dopacart.it/">
+  <meta property="og:image" content="https://dopacart.it/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="it_IT">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DopaCart · lo shopping che ti dà la scarica, non il conto">
+  <meta name="twitter:description" content="Il dopamine site italiano: tutto il brivido dello shopping, zero spesa.">
+  <meta name="twitter:image" content="https://dopacart.it/assets/og-image.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DopaCart",
+    "alternateName": "DopaCart · dopamine site",
+    "url": "https://dopacart.it/",
+    "description": "Il dopamine site italiano: un finto negozio che dà tutta la scarica di dopamina dello shopping (sfoglia, carrello, finto pagamento, pacco in arrivo, tracking) senza spendere un euro.",
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "Web, iOS, Android (PWA)",
+    "inLanguage": "it-IT",
+    "image": "https://dopacart.it/assets/og-image.png",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "author": { "@type": "Organization", "name": "DopaCart", "url": "https://dopacart.it/" }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,6 +59,12 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+  <noscript>
+    <div style="max-width:640px;margin:48px auto;padding:0 24px;font-family:system-ui,sans-serif;text-align:center;color:#1b1020">
+      <h1>DopaCart — il dopamine site italiano</h1>
+      <p>Lo shopping che ti dà la scarica, non il conto. Sfoglia quasi 5.000 prodotti, riempi il carrello, finto pagamento, pacco in arrivo con tracking e unboxing: tutto il brivido dello shopping, zero spesa. Attiva JavaScript per usare DopaCart.</p>
+    </div>
+  </noscript>
   <div id="app">
     <header class="topbar" id="topbar"></header>
     <main class="view" id="view"></main>

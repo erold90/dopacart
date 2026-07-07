@@ -1,0 +1,24 @@
+# DopaCart
+
+> DopaCart è il "dopamine site" italiano: un finto negozio online che regala tutta la scarica di dopamina dello shopping — sfogliare prodotti, riempire il carrello, un finto pagamento e seguire il pacco in arrivo con tracking e unboxing — senza spendere un euro.
+
+DopaCart è una web app gratuita (PWA installabile su telefono e desktop) pensata come intrattenimento e "shopping terapia a costo zero": per chi ama il brivido dello shopping ma non vuole spendere. È in lingua italiana, vive su https://dopacart.it.
+
+## Cosa si può fare su DopaCart
+- Sfogliare un catalogo di quasi 5.000 prodotti reali con foto (tecnologia, casa, moda, bellezza, sport)
+- Aggiungere al carrello e completare un finto checkout con carte di pagamento ironiche (tutte finte: nessun addebito)
+- Acquistare in "1-Tap" e seguire il pacco con mappa e tracking animato fino all'unboxing
+- Salire di livello, guadagnare XP, sbloccare badge e carte, mantenere lo streak quotidiano
+- Accedere senza password (codice via email) per ritrovare carrello, ordini e progressi su ogni dispositivo
+
+## Punti chiave
+- Gratis, nessun addebito reale, nessuna spedizione vera: è puro intrattenimento
+- Il primo "dopamine site" in lingua italiana
+- Monetizzazione tramite donazioni volontarie (Ko-fi), non vendendo prodotti
+
+## Link utili
+- Sito: https://dopacart.it
+- Supporto / donazioni: https://ko-fi.com/dopacart
+
+## Cosa NON è
+DopaCart non è un vero e-commerce: non vende prodotti reali, non addebita denaro e non spedisce nulla. Simula l'esperienza dello shopping per la gratificazione (la "dopamina"), a costo zero.
