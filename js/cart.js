@@ -7,7 +7,10 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
   var dropCelebrated = false;
 
   DC.views.cart = function (root) {
-    var s = DC.store, lines = s.state.cart;
+    var s = DC.store;
+    // Auto-heal: rimuovi dal carrello gli articoli il cui prodotto non esiste più (es. dopo un cambio catalogo) → evita il crash
+    var lines = s.state.cart.filter(function (l) { return s.productById(l.productId); });
+    if (lines.length !== s.state.cart.length) { s.state.cart = lines; s.save(); }
 
     if (!lines.length) {
       DC.coupon = { code: null, pct: 0 };
