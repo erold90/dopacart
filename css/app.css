@@ -91,7 +91,7 @@ a{color:inherit;text-decoration:none}
 .hero::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;right:-60px;top:-70px;
   background:radial-gradient(circle,oklch(1 0 0/.28),transparent 70%)}
 .hero .eyebrow{font-weight:800;font-size:var(--fs-xs);letter-spacing:.14em;text-transform:uppercase;opacity:.85}
-.hero h2{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:900;letter-spacing:-.04em;line-height:.98;margin:var(--sp-2) 0 var(--sp-3);max-width:14ch}
+.hero h1{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:900;letter-spacing:-.04em;line-height:.98;margin:var(--sp-2) 0 var(--sp-3);max-width:14ch}
 .hero p{font-size:var(--fs-sm);opacity:.92;max-width:30ch;margin-bottom:var(--sp-5)}
 .hero .btn-action{background:oklch(0.998 0.005 70);color:oklch(0.30 0.16 18);box-shadow:0 10px 24px oklch(0.20 0.1 300/.4)}
 .hero .floaties{position:absolute;right:-6px;bottom:-6px;display:flex;gap:6px;opacity:.9}
@@ -109,7 +109,7 @@ a{color:inherit;text-decoration:none}
 
 /* ————— Product grid + card ————— */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3)}
-.pcard{background:var(--surface);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-soft);border:1px solid var(--border);position:relative;
+.pcard{background:var(--surface);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-soft);border:1px solid var(--border);position:relative;cursor:pointer;
   transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base),border-color var(--dur-base)}
 .pcard:active{transform:scale(.98)}
 @media(hover:hover){.pcard:hover{transform:translateY(-4px);border-color:var(--action-soft);box-shadow:0 20px 42px -14px oklch(0.64 0.2 18/.32)}}
@@ -572,7 +572,7 @@ a{color:inherit;text-decoration:none}
   .grid{grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:var(--sp-4)}
   /* Hero grande */
   .hero{padding:var(--sp-16) var(--sp-12);min-height:360px;display:flex;flex-direction:column;justify-content:center}
-  .hero h2{font-size:var(--fs-4xl);max-width:18ch}
+  .hero h1{font-size:var(--fs-4xl);max-width:18ch}
   .hero p{font-size:var(--fs-lg);max-width:46ch}
   .hero .floaties span{width:56px;height:56px;border-radius:18px}
   .hero .floaties .ic{width:28px;height:28px}

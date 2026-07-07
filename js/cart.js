@@ -55,7 +55,7 @@ DC.coupon = DC.coupon || { code: null, pct: 0 };
           }).join("") + '</div>' : "") +
 
       '<div class="coupon"><span class="ci-thumb cpico">' + DC.icon("ticket") + '</span>' +
-        '<input id="coupon" placeholder="Codice sconto (prova DOPA10)" value="' + (DC.coupon.code || "") + '" autocomplete="off">' +
+        '<input id="coupon" aria-label="Codice sconto" placeholder="Codice sconto (prova DOPA10)" value="' + (DC.coupon.code || "") + '" autocomplete="off">' +
         '<button class="btn btn-ghost" id="applyCoupon">Applica</button></div>' +
 
       '<div class="cart-summary">' +

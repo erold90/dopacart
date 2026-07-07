@@ -86,8 +86,8 @@ window.DC = window.DC || {};
   }
   DC.refresh = render;
 
-  function onboarding(done) {
-    if (DC.store.state.seenOnboarding) { done(); return; }
+  function onboarding() {
+    if (DC.store.state.seenOnboarding) return;
     var o = document.createElement("div");
     o.className = "onb";
     o.innerHTML =
@@ -100,7 +100,7 @@ window.DC = window.DC || {};
       DC.store.state.seenOnboarding = true; DC.store.save();
       DC.fx.sound.success(); DC.fx.buzz.medium(); DC.fx.confetti({ count: 90 });
       o.style.transition = "opacity .3s"; o.style.opacity = "0";
-      setTimeout(function () { o.remove(); done(); }, 300);
+      setTimeout(function () { o.remove(); }, 300);
     });
   }
 
@@ -114,7 +114,8 @@ window.DC = window.DC || {};
     DC.loadCatalog().then(function () {
       if (!location.hash) location.hash = "#/home";
       window.addEventListener("hashchange", render);
-      onboarding(render);
+      render();       // renderizza SUBITO la vista (niente più splash "bloccato" dietro l'onboarding)
+      onboarding();   // onboarding come overlay sopra l'app già pronta
       if (DC.sync) DC.sync.start(); // sincronizza lo stato cross-device se loggato
     }).catch(function () {
       view.innerHTML = '<div class="empty"><div class="em">' + DC.icon("x") + '</div><div class="et">Catalogo non disponibile</div><p>Controlla la connessione e ricarica.</p></div>';

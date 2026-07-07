@@ -110,7 +110,7 @@ DC.views = DC.views || {};
     root.innerHTML =
       '<section class="hero">' +
         '<div class="eyebrow">Shopping a costo zero</div>' +
-        '<h2>Riempi il carrello, salta il conto.</h2>' +
+        '<h1>Riempi il carrello, salta il conto.</h1>' +
         '<p>Vivi tutto il brivido dell’acquisto, la dopamina senza la spesa.</p>' +
         '<button class="btn btn-action" id="heroCta">Inizia a riempire ' + DC.icon("arrowRight") + '</button>' +
         '<div class="floaties">' + ["headphones", "gamepad", "watch"].map(function (i) { return '<span>' + DC.icon(i) + '</span>'; }).join("") + '</div>' +
@@ -177,7 +177,7 @@ DC.views = DC.views || {};
     if (io) { io.disconnect(); io = null; }
     root.innerHTML =
       '<div class="searchbar"><span class="si">' + DC.icon("search") + '</span>' +
-        '<input id="q" type="search" placeholder="Cerca di tutto su DopaCart…" value="' + esc(query) + '" autocomplete="off">' +
+        '<input id="q" type="search" aria-label="Cerca prodotti" placeholder="Cerca di tutto su DopaCart…" value="' + esc(query) + '" autocomplete="off">' +
       '</div><div id="catBody"></div>';
     var q = root.querySelector("#q");
     q.addEventListener("input", function () { query = q.value; renderBody(root); });
@@ -271,7 +271,7 @@ DC.views = DC.views || {};
         '<span class="u-left">' + DC.icon("bolt") + ' Solo <b>' + lc.left + '</b> rimasti a questo prezzo</span>' +
         '<span class="u-view">' + DC.icon("eye") + ' <b id="viewN">' + lc.viewing + '</b> lo stanno guardando</span>' +
       '</div>' +
-      '<div class="delivery">' + DC.icon("truck") + ' Spedizione 0,00 € · <b>' + (p.ship ? p.ship.label : 'Consegna in pochi giorni') + '</b></div>' +
+      '<div class="delivery">' + DC.icon("truck") + ' Spedizione 0,00 € · <b>' + (p.ship && p.ship.days ? 'Consegna in ' + p.ship.days + (p.ship.days === 1 ? ' giorno' : ' giorni') : 'Consegna in pochi giorni') + '</b></div>' +
       '<p class="pd-blurb">' + p.blurb + '</p>' +
 
       '<div class="fbt"><div class="fbt-h">' + DC.icon("plusCircle") + ' Spesso comprati insieme</div>' +

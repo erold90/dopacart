@@ -177,7 +177,7 @@ DC.views = DC.views || {};
         (showVerify ? '<div class="verify-card" id="vCard">' +
             '<div class="vc-h">' + DC.icon("user") + ' Attiva il tuo account</div>' +
             '<div class="vc-sub">Codice inviato a <b>' + esc(pending.email) + '</b>. Inseriscilo per salvare i tuoi ordini su ogni dispositivo.</div>' +
-            '<div class="vc-row"><input id="vCode" class="vc-input" inputmode="numeric" maxlength="6" placeholder="••••••">' +
+            '<div class="vc-row"><input id="vCode" class="vc-input" aria-label="Codice di verifica a 6 cifre" inputmode="numeric" maxlength="6" placeholder="••••••">' +
               '<button class="btn btn-action" id="vGo">Verifica</button></div>' +
             '<button class="vc-resend" id="vResend">Non è arrivato? Reinvia</button>' +
           '</div>' : "") +

@@ -45,19 +45,19 @@ DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless
     function render() {
       if (state.step === 1) {
         ov.innerHTML =
-          '<div class="auth-card"><button class="auth-x" id="x">' + DC.icon("x") + '</button>' +
+          '<div class="auth-card" role="dialog" aria-modal="true"><button class="auth-x" id="x" aria-label="Chiudi">' + DC.icon("x") + '</button>' +
           '<div class="auth-h">Accedi a DopaCart</div>' +
           '<div class="auth-sub">Niente password: ti mandiamo un codice via email. I tuoi ordini ti seguono.</div>' +
-          '<div class="field"><label>Nome</label><input id="a-name" value="' + esc(state.name) + '" autocomplete="name" placeholder="Come ti chiami"></div>' +
-          '<div class="field"><label>Email</label><input id="a-email" type="email" value="' + esc(state.email) + '" autocomplete="email" placeholder="tu@email.it"></div>' +
+          '<div class="field"><label for="a-name">Nome</label><input id="a-name" value="' + esc(state.name) + '" autocomplete="name" placeholder="Come ti chiami"></div>' +
+          '<div class="field"><label for="a-email">Email</label><input id="a-email" type="email" value="' + esc(state.email) + '" autocomplete="email" placeholder="tu@email.it"></div>' +
           '<button class="btn btn-action btn-block btn-lg" id="send">Invia codice</button></div>';
         ov.querySelector("#send").addEventListener("click", sendCode);
       } else {
         ov.innerHTML =
-          '<div class="auth-card"><button class="auth-x" id="x">' + DC.icon("x") + '</button>' +
+          '<div class="auth-card" role="dialog" aria-modal="true"><button class="auth-x" id="x" aria-label="Chiudi">' + DC.icon("x") + '</button>' +
           '<div class="auth-h">Controlla l\'email</div>' +
           '<div class="auth-sub">Codice inviato a <b>' + esc(state.email) + '</b></div>' +
-          '<div class="field"><label>Codice a 6 cifre</label><input id="a-code" inputmode="numeric" maxlength="6" placeholder="••••••" style="letter-spacing:.4em;text-align:center;font-size:var(--fs-xl)"></div>' +
+          '<div class="field"><label for="a-code">Codice a 6 cifre</label><input id="a-code" inputmode="numeric" maxlength="6" placeholder="••••••" style="letter-spacing:.4em;text-align:center;font-size:var(--fs-xl)"></div>' +
           '<button class="btn btn-action btn-block btn-lg" id="verify">Entra</button>' +
           '<button class="auth-link" id="back">Cambia email</button></div>';
         var ci = ov.querySelector("#a-code"); if (ci) ci.focus();

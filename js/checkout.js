@@ -41,7 +41,7 @@ window.DC = window.DC || {};
         '<span class="link-btn">Cambia</span></div>' +
 
       (DC.auth && DC.auth.enabled() && !DC.auth.isLoggedIn()
-        ? '<div class="co-email"><label>' + DC.icon("user") + ' La tua email <span class="opt">facoltativa</span></label>' +
+        ? '<div class="co-email"><label for="coEmail">' + DC.icon("user") + ' La tua email <span class="opt">facoltativa</span></label>' +
             '<input id="coEmail" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.it" value="' + esc(email) + '">' +
             '<div class="sub">Inseriscila per registrarti e ritrovare ordini e progressi su ogni dispositivo.</div></div>'
         : "") +

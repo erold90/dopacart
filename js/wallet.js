@@ -73,8 +73,8 @@ window.DC = window.DC || {};
   function sheet(title, bodyHTML) {
     var ov = document.createElement("div");
     ov.className = "sheet-ov";
-    ov.innerHTML = '<div class="sheet-card"><div class="sheet-h"><span>' + title + '</span>' +
-      '<button class="auth-x" data-x>' + DC.icon("x") + '</button></div><div class="sheet-b">' + bodyHTML + "</div></div>";
+    ov.innerHTML = '<div class="sheet-card" role="dialog" aria-modal="true"><div class="sheet-h"><span>' + title + '</span>' +
+      '<button class="auth-x" data-x aria-label="Chiudi">' + DC.icon("x") + '</button></div><div class="sheet-b">' + bodyHTML + "</div></div>";
     document.body.appendChild(ov);
     if (DC.fx && DC.fx.sound) DC.fx.sound.pop();
     function close() { ov.style.opacity = "0"; setTimeout(function () { ov.remove(); }, 220); }
@@ -90,12 +90,12 @@ window.DC = window.DC || {};
       '<div class="chips-row" id="lblChips">' +
         ["Casa", "Ufficio", "Altro"].map(function (l) { return '<button class="chip' + (addr.label === l ? " on" : "") + '" data-lbl="' + l + '">' + l + "</button>"; }).join("") +
       '</div>' +
-      '<div class="field"><label>Etichetta</label><input id="a-label" value="' + esc(addr.label || "Casa") + '" placeholder="Casa"></div>' +
-      '<div class="field"><label>Nome e cognome</label><input id="a-name" value="' + esc(addr.name || DC.store.state.profile.name || "") + '" placeholder="Mario Rossi"></div>' +
-      '<div class="field"><label>Via e civico</label><input id="a-street" value="' + esc(addr.street || "") + '" placeholder="Via Roma 1"></div>' +
-      '<div class="row2"><div class="field"><label>CAP</label><input id="a-zip" inputmode="numeric" maxlength="5" value="' + esc(addr.zip || "") + '" placeholder="00100"></div>' +
-      '<div class="field"><label>Città</label><input id="a-city" value="' + esc(addr.city || "") + '" placeholder="Roma"></div></div>' +
-      '<div class="field"><label>Provincia</label><input id="a-prov" maxlength="2" value="' + esc(addr.prov || "") + '" placeholder="RM" style="text-transform:uppercase"></div>' +
+      '<div class="field"><label for="a-label">Etichetta</label><input id="a-label" value="' + esc(addr.label || "Casa") + '" placeholder="Casa"></div>' +
+      '<div class="field"><label for="a-name">Nome e cognome</label><input id="a-name" value="' + esc(addr.name || DC.store.state.profile.name || "") + '" placeholder="Mario Rossi"></div>' +
+      '<div class="field"><label for="a-street">Via e civico</label><input id="a-street" value="' + esc(addr.street || "") + '" placeholder="Via Roma 1"></div>' +
+      '<div class="row2"><div class="field"><label for="a-zip">CAP</label><input id="a-zip" inputmode="numeric" maxlength="5" value="' + esc(addr.zip || "") + '" placeholder="00100"></div>' +
+      '<div class="field"><label for="a-city">Città</label><input id="a-city" value="' + esc(addr.city || "") + '" placeholder="Roma"></div></div>' +
+      '<div class="field"><label for="a-prov">Provincia</label><input id="a-prov" maxlength="2" value="' + esc(addr.prov || "") + '" placeholder="RM" style="text-transform:uppercase"></div>' +
       '<button class="btn btn-action btn-block btn-lg" id="a-save">Salva indirizzo</button>');
     s.body.querySelectorAll("[data-lbl]").forEach(function (b) {
       b.addEventListener("click", function () { s.body.querySelector("#a-label").value = b.dataset.lbl; s.body.querySelectorAll("[data-lbl]").forEach(function (x) { x.classList.remove("on"); }); b.classList.add("on"); });
