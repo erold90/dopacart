@@ -160,6 +160,9 @@ DC.views = DC.views || {};
     var o = DC.store.getOrder(params.id);
     if (!o) { root.innerHTML = DC.emptyBox("package", "Ordine non trovato", { btn: "I miei ordini", btnHash: "#/orders", btnIcon: "package" }); return; }
     var code = "DOP-" + o.id.slice(-5).toUpperCase();
+    var pending = null; try { pending = JSON.parse(localStorage.getItem("dopacart.pending")); } catch (e) {}
+    var showVerify = pending && pending.email && DC.auth && DC.auth.enabled() && !DC.auth.isLoggedIn();
+    var esc = function (t) { return (t || "").toString().replace(/</g, "&lt;"); };
     root.innerHTML =
       '<div class="confirm">' +
         '<div class="confirm-emoji">' + DC.icon("party") + '</div>' +
@@ -171,6 +174,13 @@ DC.views = DC.views || {};
             '<div class="ce-count" id="ceCount">--:--:--</div></div>' +
           '<div class="confirm-bar"><span></span></div>' +
         '</div>' +
+        (showVerify ? '<div class="verify-card" id="vCard">' +
+            '<div class="vc-h">' + DC.icon("user") + ' Attiva il tuo account</div>' +
+            '<div class="vc-sub">Codice inviato a <b>' + esc(pending.email) + '</b>. Inseriscilo per salvare i tuoi ordini su ogni dispositivo.</div>' +
+            '<div class="vc-row"><input id="vCode" class="vc-input" inputmode="numeric" maxlength="6" placeholder="••••••">' +
+              '<button class="btn btn-action" id="vGo">Verifica</button></div>' +
+            '<button class="vc-resend" id="vResend">Non è arrivato? Reinvia</button>' +
+          '</div>' : "") +
         '<button class="btn btn-action btn-block btn-lg" id="follow">' + DC.icon("mapPin") + ' Segui la mia consegna</button>' +
       '</div>';
     DC.fx.confetti({ count: 130, y: innerHeight * 0.42 });
@@ -184,6 +194,26 @@ DC.views = DC.views || {};
     }
     tick(); DC.regTimer(setInterval(tick, 1000));
     root.querySelector("#follow").addEventListener("click", function () { DC.fx.sound.tap(); DC.go("#/track/" + o.id); });
+    if (showVerify) {
+      var vGo = root.querySelector("#vGo");
+      vGo.addEventListener("click", function () {
+        var cc = (root.querySelector("#vCode").value || "").trim();
+        if (!/^\d{6}$/.test(cc)) { DC.fx.toast("Inserisci le 6 cifre", { icon: "x" }); return; }
+        vGo.disabled = true; vGo.textContent = "Verifico…";
+        DC.auth.verify(pending.email, cc).then(function (d) {
+          try { localStorage.removeItem("dopacart.pending"); } catch (e) {}
+          DC.fx.confetti({ count: 90 }); DC.fx.sound.success(); DC.fx.buzz.win();
+          DC.fx.toast("Account attivato, " + d.name + "!", { win: true, icon: "check" });
+          if (DC.sync) DC.sync.onLogin();
+          DC.refreshNav();
+          var vc = document.getElementById("vCard");
+          if (vc) vc.innerHTML = '<div class="vc-h">' + DC.icon("check") + ' Account attivato!</div><div class="vc-sub">I tuoi ordini ora ti seguono su ogni dispositivo.</div>';
+        }).catch(function (e) { DC.fx.toast(e.message, { icon: "x", ms: 2600 }); vGo.disabled = false; vGo.textContent = "Verifica"; });
+      });
+      root.querySelector("#vResend").addEventListener("click", function () {
+        if (DC.auth.request) DC.auth.request(pending.email, pending.name).then(function () { DC.fx.toast("Codice reinviato", { icon: "check" }); }).catch(function (e) { DC.fx.toast(e.message, { icon: "x", ms: 2400 }); });
+      });
+    }
   };
 
   /* —— Vista ORDINI —— */

@@ -80,5 +80,15 @@ DC.AUTH_URL = "https://dopacart-auth.erold90.workers.dev"; // login passwordless
     ov.addEventListener("click", function (e) { if (e.target === ov) close(); });
   }
 
-  DC.auth = { sess: sess, enabled: enabled, isLoggedIn: isLoggedIn, logout: logout, open: open };
+  // Riusabili dal checkout (registrazione soft inline)
+  function request(email, name) { return api("/auth/request", { email: email, name: name || "Cliente" }); }
+  function verify(email, code) {
+    return api("/auth/verify", { email: email, code: code }).then(function (d) {
+      save({ token: d.token, email: d.email, name: d.name });
+      DC.store.state.profile.name = d.name; DC.store.save();
+      return d;
+    });
+  }
+
+  DC.auth = { sess: sess, enabled: enabled, isLoggedIn: isLoggedIn, logout: logout, open: open, request: request, verify: verify };
 })();

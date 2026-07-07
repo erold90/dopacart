@@ -16,8 +16,8 @@ window.DC = window.DC || {};
   DC.regTimer = function (id) { DC._viewTimers.push(id); return id; };
   DC.clearViewTimers = function () { DC._viewTimers.forEach(function (id) { clearInterval(id); }); DC._viewTimers = []; };
 
-  DC.addToCartFx = function (id, el) {
-    DC.store.addToCart(id);
+  DC.addToCartFx = function (id, el, n) {
+    DC.store.addToCart(id, n || 1);
     DC.fx.sound.add(); DC.fx.buzz.light(); DC.fx.flyToCart(el);
     var lvl = DC.store.addXp(1);
     DC.refreshNav(true);

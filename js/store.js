@@ -71,9 +71,10 @@ window.DC = window.DC || {};
   function wishlistCount() { return state.wishlist.length; }
 
   /* —— Carrello —— */
-  function addToCart(id) {
+  function addToCart(id, n) {
+    n = n || 1;
     var line = state.cart.find(function (l) { return l.productId === id; });
-    if (line) line.qty++; else state.cart.push({ productId: id, qty: 1 });
+    if (line) line.qty += n; else state.cart.push({ productId: id, qty: n });
     save();
   }
   function setQty(id, qty) {

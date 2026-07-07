@@ -287,13 +287,28 @@ DC.views = DC.views || {};
       '<div class="section-title">' + DC.icon("star") + 'Recensioni</div>' +
       '<div class="reviews">' + (function () { var rv = coherentRevs(p); return rv.length ? rv.map(reviewCard).join("") : '<p class="sub">Ancora nessuna recensione.</p>'; })() + '</div>' +
 
-      '<div class="sticky-cta"><div class="cta-row">' +
-        '<button class="btn btn-tap btn-lg" id="oneTap">' + DC.icon("zap") + ' 1-Tap</button>' +
-        '<button class="btn btn-action btn-lg" id="addBtn">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button>' +
-      '</div></div>';
+      '<div class="sticky-cta">' +
+        '<div class="pd-buy">' +
+          '<div class="qstep"><button class="qbtn" id="qMinus" aria-label="Diminuisci">' + DC.icon("minus") + '</button>' +
+            '<span class="qnum" id="qNum">1</span>' +
+            '<button class="qbtn" id="qPlus" aria-label="Aumenta">' + DC.icon("plus") + '</button></div>' +
+          '<button class="btn btn-action btn-lg" id="addBtn" style="flex:1">' + DC.icon("cart") + ' Aggiungi · ' + DC.fx.euro(p.price) + '</button>' +
+        '</div>' +
+        '<button class="btn btn-tap btn-block" id="oneTap">' + DC.icon("zap") + ' Compra ora in 1-Tap</button>' +
+      '</div>';
 
     root.querySelector("#back").addEventListener("click", function () { history.back(); });
-    root.querySelector("#addBtn").addEventListener("click", function (e) { DC.addToCartFx(p.id, e.currentTarget); DC.fx.toast("Aggiunto al carrello", { icon: "check" }); });
+    var qty = 1, qNum = root.querySelector("#qNum"), addBtn = root.querySelector("#addBtn");
+    function setQ(n) {
+      qty = Math.max(1, Math.min(99, n)); qNum.textContent = qty;
+      addBtn.innerHTML = DC.icon("cart") + " Aggiungi " + (qty > 1 ? qty + " " : "") + "· " + DC.fx.euro(p.price * qty);
+    }
+    root.querySelector("#qMinus").addEventListener("click", function () { DC.fx.sound.tap(); setQ(qty - 1); });
+    root.querySelector("#qPlus").addEventListener("click", function () { DC.fx.sound.tap(); setQ(qty + 1); });
+    addBtn.addEventListener("click", function (e) {
+      DC.addToCartFx(p.id, e.currentTarget, qty);
+      DC.fx.toast(qty > 1 ? "Aggiunti " + qty + " al carrello" : "Aggiunto al carrello", { icon: "check" });
+    });
     var ot = root.querySelector("#oneTap");
     if (ot) ot.addEventListener("click", function () { DC.fx.sound.tap(); if (DC.oneTapBuy) DC.oneTapBuy(p.id); });
     root.querySelector("#fbtAdd").addEventListener("click", function (e) {

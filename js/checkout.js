@@ -1,7 +1,9 @@
 /* DopaCart — Checkout a pagina unica (stile Amazon): indirizzo + pagamento pre-compilati, un tap "Ordina ora". Pagamento finto. */
 window.DC = window.DC || {};
 (function () {
+  var email = ""; // email ospite (registrazione soft)
   function esc(s) { return (s || "").toString().replace(/</g, "&lt;"); }
+  function validEmail(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e); }
 
   DC.views.checkout = function (root) {
     var s = DC.store;
@@ -38,6 +40,12 @@ window.DC = window.DC || {};
         '<div class="co-main"><b>' + esc(pay.title) + '</b><div class="sub">' + esc(pay.sub) + "</div></div>" +
         '<span class="link-btn">Cambia</span></div>' +
 
+      (DC.auth && DC.auth.enabled() && !DC.auth.isLoggedIn()
+        ? '<div class="co-email"><label>' + DC.icon("user") + ' La tua email <span class="opt">facoltativa</span></label>' +
+            '<input id="coEmail" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.it" value="' + esc(email) + '">' +
+            '<div class="sub">Inseriscila per registrarti e ritrovare ordini e progressi su ogni dispositivo.</div></div>'
+        : "") +
+
       '<div class="section-title">' + DC.icon("clipboard") + "Riepilogo</div>" +
       '<div class="cart-summary">' +
         s.state.cart.map(function (l) {
@@ -57,6 +65,8 @@ window.DC = window.DC || {};
       else DC.wallet.editAddress(null, function () { paint(root); });
     });
     root.querySelector("#coPay").addEventListener("click", function () { DC.wallet.pickPayment(function () { paint(root); }); });
+    var ce = root.querySelector("#coEmail");
+    if (ce) ce.addEventListener("input", function () { email = ce.value.trim(); });
     root.querySelector("#order").addEventListener("click", function () { placeOrder(root); });
   }
 
@@ -72,6 +82,12 @@ window.DC = window.DC || {};
     var disc = sub * ((DC.coupon && DC.coupon.pct) || 0);
     var o = s.createOrder(DC.wallet.shipFrom(addr), { discountAmt: disc, payment: DC.wallet.payInfo() });
     DC.coupon = { code: null, pct: 0 };
+    // Registrazione soft: se ospite e email valida → salva pending + invia codice (verifica dopo, nella conferma)
+    if (DC.auth && DC.auth.enabled() && !DC.auth.isLoggedIn() && validEmail(email)) {
+      try { localStorage.setItem("dopacart.pending", JSON.stringify({ email: email, name: addr.name || "Cliente" })); } catch (e) {}
+      if (DC.auth.request) DC.auth.request(email, addr.name).catch(function () {});
+    }
+    email = "";
     DC.refreshNav();
     DC.go("#/confirm/" + o.id);
   }
