@@ -166,11 +166,8 @@ window.DC = window.DC || {};
     if (!addr) { DC.fx.toast("Imposta un indirizzo per il 1-Tap", { icon: "mapPin" }); editAddress(null, function () { DC.oneTapBuy(productId); }); return; }
     var o = s.buyNow(productId, shipFrom(addr), { payment: payInfo() });
     if (!o) return;
-    DC.fx.confetti({ count: 120, y: innerHeight * 0.5 });
-    DC.fx.sound.success(); DC.fx.buzz.strong();
-    DC.fx.toast("Ordinato in 1 tap! In viaggio", { win: true, icon: "zap", ms: 1800 });
     DC.refreshNav();
-    DC.go("#/track/" + o.id);
+    DC.go("#/confirm/" + o.id);
   };
 
   DC.wallet = {

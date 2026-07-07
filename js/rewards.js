@@ -3,14 +3,29 @@ window.DC = window.DC || {};
 DC.views = DC.views || {};
 (function () {
   DC.BADGES = [
-    { id: "primo-ordine", icon: "cart",   name: "Primo ordine" },
-    { id: "streak-3",     icon: "flame",  name: "Streak 3" },
-    { id: "streak-7",     icon: "zap",    name: "Streak 7" },
-    { id: "notturno",     icon: "moon",   name: "Notturno" },
-    { id: "risparmiatore",icon: "piggy",  name: "Risparmio" },
-    { id: "collezionista",icon: "trophy", name: "Collezione" },
-    { id: "fortunato",    icon: "gift",   name: "Fortunato" },
-    { id: "livello-5",    icon: "star",   name: "Livello 5" }
+    { id: "primo-ordine",  icon: "cart",       name: "Primo ordine" },
+    { id: "streak-3",      icon: "flame",      name: "Streak 3" },
+    { id: "streak-7",      icon: "flame",      name: "Streak 7" },
+    { id: "streak-14",     icon: "flame",      name: "Streak 14" },
+    { id: "streak-30",     icon: "zap",        name: "Inarrestabile" },
+    { id: "notturno",      icon: "moon",       name: "Notturno" },
+    { id: "mattiniero",    icon: "sparkles",   name: "Mattiniero" },
+    { id: "risparmiatore", icon: "piggy",      name: "Risparmio 500" },
+    { id: "paperone",      icon: "piggy",      name: "Paperone 2K" },
+    { id: "milionario",    icon: "trophy",     name: "Milionario 10K" },
+    { id: "collezionista", icon: "boxes",      name: "5 consegne" },
+    { id: "shopaholic",    icon: "boxes",      name: "10 consegne" },
+    { id: "leggenda",      icon: "trophy",     name: "25 consegne" },
+    { id: "fortunato",     icon: "gift",       name: "Fortunato" },
+    { id: "livello-5",     icon: "star",       name: "Livello 5" },
+    { id: "livello-10",    icon: "star",       name: "Livello 10" },
+    { id: "livello-20",    icon: "star",       name: "Livello 20" },
+    { id: "big-spender",   icon: "zap",        name: "Spendaccione" },
+    { id: "carrello-pieno",icon: "cart",       name: "Carrello pieno" },
+    { id: "esploratore",   icon: "sparkles",   name: "Esploratore" },
+    { id: "cuore-doro",    icon: "heart",      name: "Cuore d'oro" },
+    { id: "contrassegno",  icon: "coins",      name: "Alla consegna" },
+    { id: "carta-nera",    icon: "creditCard", name: "Carta esclusiva" }
   ];
   function badgeName(id) { var b = DC.BADGES.find(function (x) { return x.id === id; }); return b ? b.name : id; }
 
@@ -27,13 +42,32 @@ DC.views = DC.views || {};
     function tryBadge(id, cond) { if (cond && DC.store.addBadge(id)) newBadges.push(badgeName(id)); }
     var delivered = DC.store.state.orders.filter(function (o) { return o.delivered; }).length;
     var hour = new Date().getHours();
+    var sav = DC.store.state.profile.savings.totalFake;
+    var pay = order.payment || {};
+    var catsBought = {};
+    DC.store.state.orders.forEach(function (o) { if (o.delivered) (o.items || []).forEach(function (it) { var p = DC.store.productById(it.productId); if (p) catsBought[p.cat] = 1; }); });
     tryBadge("primo-ordine", true);
     tryBadge("streak-3", streak.count >= 3);
     tryBadge("streak-7", streak.count >= 7);
+    tryBadge("streak-14", streak.count >= 14);
+    tryBadge("streak-30", streak.count >= 30);
     tryBadge("notturno", hour >= 22 || hour < 6);
-    tryBadge("risparmiatore", DC.store.state.profile.savings.totalFake >= 500);
+    tryBadge("mattiniero", hour >= 5 && hour < 8);
+    tryBadge("risparmiatore", sav >= 500);
+    tryBadge("paperone", sav >= 2000);
+    tryBadge("milionario", sav >= 10000);
     tryBadge("collezionista", delivered >= 5);
+    tryBadge("shopaholic", delivered >= 10);
+    tryBadge("leggenda", delivered >= 25);
     tryBadge("livello-5", lvl.level >= 5);
+    tryBadge("livello-10", lvl.level >= 10);
+    tryBadge("livello-20", lvl.level >= 20);
+    tryBadge("big-spender", order.total >= 200);
+    tryBadge("carrello-pieno", (order.items || []).length >= 5);
+    tryBadge("esploratore", Object.keys(catsBought).length >= 5);
+    tryBadge("cuore-doro", DC.store.wishlistCount() >= 10);
+    tryBadge("contrassegno", pay.method === "cod");
+    tryBadge("carta-nera", pay.cardId === "espresso" || pay.cardId === "infinity");
 
     return { granted: true, xp: xpGain, saved: order.total, leveledUp: lvl.leveledUp, level: lvl.level, streak: streak.count, newBadges: newBadges };
   }

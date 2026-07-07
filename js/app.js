@@ -75,6 +75,7 @@ window.DC = window.DC || {};
       product: function () { DC.views.product(view, { id: r.a }); return "catalog"; },
       cart: function () { DC.views.cart(view); return "cart"; },
       checkout: function () { DC.views.checkout(view); return "cart"; },
+      confirm: function () { DC.views.confirm(view, { id: r.a }); return "orders"; },
       orders: function () { DC.views.orders(view); return "orders"; },
       track: function () { DC.views.track(view, { id: r.a }); return "orders"; },
       wishlist: function () { DC.views.wishlist(view); return ""; },

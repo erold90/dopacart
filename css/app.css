@@ -504,6 +504,25 @@ a{color:inherit;text-decoration:none}
 .cta-row #addBtn{flex:1}
 .btn-tap{flex:0 0 auto;background:var(--grad-reward);color:var(--on-action);font-weight:800}
 
+/* ————— Schermata conferma "Pagamento approvato!" ————— */
+.confirm{text-align:center;padding:var(--sp-8) var(--sp-2) var(--sp-6);max-width:460px;margin-inline:auto}
+.confirm-emoji{width:100px;height:100px;margin:0 auto var(--sp-4);border-radius:var(--r-full);display:grid;place-items:center;background:var(--grad-reward);color:oklch(1 0 0);box-shadow:var(--shadow-pop);animation:confirmPop var(--dur-meso) var(--ease-pop)}
+.confirm-emoji .ic{width:54px;height:54px}
+.confirm-h{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+.confirm-sub{color:var(--text-soft);font-size:var(--fs-sm);max-width:34ch;margin:var(--sp-2) auto var(--sp-6);line-height:1.4}
+.confirm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5);box-shadow:var(--shadow-soft);margin-bottom:var(--sp-6);text-align:left}
+.confirm-row{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.confirm-row .paid{display:inline-flex;align-items:center;gap:4px;color:var(--success);font-size:var(--fs-sm)}
+.confirm-row .paid .ic{width:16px;height:16px}
+.confirm-eta{text-align:center;margin:var(--sp-5) 0 var(--sp-3)}
+.ce-label{display:inline-flex;align-items:center;gap:6px;color:var(--text-soft);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.ce-label .ic{width:15px;height:15px;color:var(--action)}
+.ce-count{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:800;letter-spacing:.02em;color:var(--action);margin-top:var(--sp-1);font-variant-numeric:tabular-nums}
+.confirm-bar{height:8px;border-radius:var(--r-full);background:var(--surface-2);overflow:hidden}
+.confirm-bar span{display:block;height:100%;background:var(--grad-action);border-radius:var(--r-full);animation:barGrow 1.2s var(--ease-out) both}
+@keyframes barGrow{from{width:0}to{width:5%}}
+@keyframes confirmPop{from{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}to{transform:scale(1);opacity:1}}
+
 /* ————— DESKTOP (≥ 960px): layout wide, nav in alto, griglia multi-colonna ————— */
 @media (min-width: 960px){
   #app{max-width:1440px}

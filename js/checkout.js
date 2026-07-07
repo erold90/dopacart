@@ -72,10 +72,7 @@ window.DC = window.DC || {};
     var disc = sub * ((DC.coupon && DC.coupon.pct) || 0);
     var o = s.createOrder(DC.wallet.shipFrom(addr), { discountAmt: disc, payment: DC.wallet.payInfo() });
     DC.coupon = { code: null, pct: 0 };
-    DC.fx.confetti({ count: 120, y: innerHeight * 0.5 });
-    DC.fx.sound.success(); DC.fx.buzz.strong();
-    DC.fx.toast("Ordine confermato! Il pacco è in viaggio", { win: true, icon: "check", ms: 2000 });
     DC.refreshNav();
-    DC.go("#/track/" + o.id);
+    DC.go("#/confirm/" + o.id);
   }
 })();

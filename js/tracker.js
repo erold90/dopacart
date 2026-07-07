@@ -155,6 +155,37 @@ DC.views = DC.views || {};
     });
   }
 
+  /* —— Vista CONFERMA (post-pagamento, prima del tracking) —— */
+  DC.views.confirm = function (root, params) {
+    var o = DC.store.getOrder(params.id);
+    if (!o) { root.innerHTML = DC.emptyBox("package", "Ordine non trovato", { btn: "I miei ordini", btnHash: "#/orders", btnIcon: "package" }); return; }
+    var code = "DOP-" + o.id.slice(-5).toUpperCase();
+    root.innerHTML =
+      '<div class="confirm">' +
+        '<div class="confirm-emoji">' + DC.icon("party") + '</div>' +
+        '<div class="confirm-h">Pagamento approvato!</div>' +
+        '<div class="confirm-sub">0,00 € hanno lasciato il tuo conto. Complimenti per l’acquisto più furbo della tua vita.</div>' +
+        '<div class="confirm-card">' +
+          '<div class="confirm-row"><span>Ordine ' + code + '</span><span class="paid">' + DC.icon("check") + ' PAGATO</span></div>' +
+          '<div class="confirm-eta"><div class="ce-label">' + DC.icon("truck") + ' Arrivo stimato</div>' +
+            '<div class="ce-count" id="ceCount">--:--:--</div></div>' +
+          '<div class="confirm-bar"><span></span></div>' +
+        '</div>' +
+        '<button class="btn btn-action btn-block btn-lg" id="follow">' + DC.icon("mapPin") + ' Segui la mia consegna</button>' +
+      '</div>';
+    DC.fx.confetti({ count: 130, y: innerHeight * 0.42 });
+    DC.fx.sound.success(); DC.fx.buzz.strong();
+    function z(n) { return (n < 10 ? "0" : "") + n; }
+    function tick() {
+      var el = document.getElementById("ceCount"); if (!el) return;
+      var r = Math.max(0, (o.etaAt || Date.now()) - Date.now());
+      var d = Math.floor(r / 86400000), h = Math.floor(r % 86400000 / 3600000), m = Math.floor(r % 3600000 / 60000), s = Math.floor(r % 60000 / 1000);
+      el.textContent = (d > 0 ? d + "g " : "") + z(h) + ":" + z(m) + ":" + z(s);
+    }
+    tick(); DC.regTimer(setInterval(tick, 1000));
+    root.querySelector("#follow").addEventListener("click", function () { DC.fx.sound.tap(); DC.go("#/track/" + o.id); });
+  };
+
   /* —— Vista ORDINI —— */
   DC.views.orders = function (root) {
     var orders = DC.store.state.orders;
